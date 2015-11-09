@@ -1,0 +1,43 @@
+<br>
+A demo showing a 10x10 grid of quads with self-shadowing and normal-map bumpmapping.<br>
+Requires a Win95 or better PC with DirectX8.0 or higher and one of the following cards:<br>
+-Radeon 1 / 7200 / 7500.<br>
+-GeForce 3 (any type).<br>
+-GeForce 4 Ti.<br>
+-Matrox Parhelia (caution - untested!).<br>
+You can also run on the folowing cards, but they will only support a distant lightsource because they do not support volume textures:<br>
+-GeForce 4 MX and GeForce 4 GO. Note that these are completely different cards to the GeForce 4 Ti despite the name!<br>
+-Geforce 1 / 2 / GTS.<br>
+-Permedia3.<br>
+-3Dlabs GVX series.<br>
+<br>
+Please note that volume texture support seems to be still very experimental, presumably because so few apps use it. Artifacts have been seen on some Radeon cards because of the wrapping from 0 to 1 (seen as a mangled line of shadows going either vertically or diagonally when using the "local light" setting), and some GF3 and GF4Ti drivers seem not to support volume textures at all. The menu option "bodge around buggy drivers" may help in some cases - sadly not all.<br>
+<br>
+If you have any trouble at all running the demo, do email me and tell me and I will see what I can do. I have access to a large number of cards because of my job, and I'm sure I can quickly modify the demo to work on whatever card you have available, including those not listed above, as long as they have DirectX drivers.<br>
+<br>
+<br>
+To use the demo:<br>
+<br>
+-Move the mouse over the window to change the light position.<br>
+-After any change of options, the texture starts at low resolution, then after five seconds switches to high resolution. The high-res maps can take some time to calculate, so the app may appear to freeze for a while (10 seconds for 32 directions on an Athlon 850MHz) - starting with low-res ones allows values to be tweaked without this wait.<br>
+-Change the number of horizon maps directions used with shift plus the square bracket keys.<br>
+-Change the resolution of the horizon maps using the 9 and 0 keys.<br>
+-There is no attempt at compressing the horizon maps in this simple demo, so they can take a lot of memory. This makes compatibility easier, but some cards may run out of memory when using a lot of directions. Try turning down the resolution of the horizon maps first to compensate (the 9 key).<br>
+-Toggle distant/local light mode using Ctrl+L. Distant light mode (the default) simply uses multitexture to blend the appropriate two horizon maps together. Local light mode uses volume textures as described in the paper.<br>
+-Toggle between a heightmap of ellipsoids and one from a file. Note that the default file bumpmap is quite low-rez, so you may want to increase the scale using the keypad +/- keys. A scale of around 1500% is a good setting.<br>
+-The ellipsoid heightmap uses a random number seed which can be incremented using Ctrl+Shift+C.<br>
+-"Use apprioxmate angle calculation" toggles between using the actual bearing angle in calculations and using the approximation shown in the paper. In practice I couldn't see any difference in quality between the two.<br>
+-"Show normal or horizon map" displays the blended horizon map being used (or the normal map if self-shadowing is disabled).<br>
+-Play with other settings, they should all work, though some of them might not do very useful things.
+<br>
+If there are any questions at all, or things you want to see in the demo to illustrate things from the paper, just yell. I am happy to put this demo and the source code on a CD or a web site (including this one) to accompany the published paper.<br>
+<br>
+<br>
+Tom.<br>
+<br>
+Me:<br>
+<a href="mailto:tom.forsyth.removethisbit@eelpi.gotdns.org">tom.forsyth.removethisbit@eelpi.gotdns.org</a><br>
+<a href="http://www.radgametools.com/">Muckyfoot</a>, where I work.<br>
+<a href="http://www.eelpi.gotdns.org/">Main site</a><br>
+<br>
+<br>

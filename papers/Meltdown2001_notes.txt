@@ -1,0 +1,199 @@
+Page 2:
+
+Not just character rendering, but that is the biggest challenge.
+The rest is comparatively easy.
+
+Page 4:
+
+No need for overly-simple shaders, since their speed is proportional to
+screen space covered (PS) and verts (VS) and both are scaled appropriately.
+However, do need to stick to a single pass, which does limit what can be done.
+
+Page 5:
+
+Scalable shaders should include compatibility with older hardware - makes
+compatibility much easier without huge extra hassles. Older hardware just starts
+shader LoD at a lower level
+
+General compat point - ALWAYS have a DX5-style render at bottom of fallback
+path. Solves 99% of problems. Also allows newer hardware with dodgy drivers
+to fall back as well. Perfect drivers are great, but they don’t exist. Don’t be afraid
+of turning off effects. DX5 hardware has hard upper limit of quality - don’t
+kill yourself.
+
+Page 6:
+
+If artists like using NURBS or other higher-level stuff, and you have the tools,
+no reason not to use them as well. But _need_ displacement mapping - curves
+are generally very boring - polys for polys sake.
+
+-Not many tools for disp mapping. NEED a preview tool.
+-Wheels are v. boring to make, but look wrong if not correct. If made with generic
+	8-sided cylinder + disp map on tread & wheel, artists just
+	mix’n’match treads & wheel styles for different wheels. Minimal effort
+	But maintains consistent level of detail in world.
+	Tyres also an excellent showcase for bumpmaps & disp maps :-)
+-Obsolesence = game looks old-hat on release.
+	-Have to plan 2 years ahead.
+	-Therefore some art will be done 2 years before ship!
+	-Hardware more powerful than expected
+	-Project slips!
+	-Not as good as manual rework, but quick.
+
+Page 7:
+
+-Uses Garland, Heckbert & Hoppe QEM, possibly modified by anim stuff.
+-Works with strips (X-box, some PC cards) and lists (most PC cards)
+-Need more details? Ask during Questions.
+-Or see Charles Bloom’s web site for original inspiration.
+-Concept of “levels” - each level can be rendered completely differently
+	as long as transition is invisible. Concept used throughout.
+
+Of course, can use any decent LoD system:
+-Other VIPM methods (especially skipstrips/skiplists)
+-Discrete LoD - not mad, especially for odd platforms/architectures.
+
+Page 8:
+
+Meltdown2000 talk was about this - brief recap.
+
+Can’t do real displacement mapping yet, but this is next best thing.
+Even with disp. map hardware, need effective fallback for older hardware.
+Rest of talk still very applicable to disp. map hardware.
+
+Page 9:
+
+Would be 6 bytes ( 3 * index + I, J, disp), but D3D needs padding to DWORD.
+So use extra two bytes either for more per-vert info (for VS effects), or
+increase I, J precision.
+
+-Base mesh usually processed by CPU, e.g. using software VS.
+-Partitioning can be done at start of day for different-sized constant areas.
+	Or pre-process 4 different options & load appropriate one.
+-Partitioning a pain, but necessary. Done optimally for each VIPM level.
+	Ideally lowest level has 1 partition - 1 call per object.
+	Or could switch to normal matrix-palette system at low LoD.
+
+-Can cause “lobster shell” artefacts when animating.
+-Not actually very visible as long as lighting smooth.
+-Solve by adding more base-mesh verts in problem areas.
+-Real displacement maps obviously even better.
+
+Page 10:
+
+Note that annealing can send I,J out of range for crease edge verts - make sure
+VS algo is stable for those areas. Also make sure vertex format can take it -
+another good reason to use extra 2 bytes to increase precision
+(in this case range) of I,J.
+
+Can also solve by adding more base mesh verts with same pos but different
+normals to cover problem areas. Means vertex format doesn’t require changes,
+and extra bytes can be used elsewhere.
+
+Several papers by Hoppe et al about finding good parameterisation for
+complex meshes - exactly what the doctor ordered! Above is a bit of a hack. :-)
+
+Page 11:
+
+-Vital for crowd scenes - bones get much more expensive as number
+	of verts decreases. 100 bones on 300 vert model is silly.
+-Need lots of bones for faces, hands, muscles, clothing, equipment.
+-Per-bone work:
+	Decompress
+	(S)Lerp according to time
+	(S)Lerp according to area weightings (run anim vs wave anim)
+	Convert to matrix
+	Find inverse
+-Hand with fingers collapse tree
+-VIPM LoD places upper limit on number of bones.
+	Means that partitioning can be done as pre-process step.
+	Each sliding window level partitioned optimally.
+-Animations vary a lot - hand in (a) walk (b) pick up mug (c) point (d) play piano
+-Anims can only reduce no of bones, not increase them
+	Allows artist-made triangle LoD optimisations that can’t
+	be auto-done, e.g. fingers->”flipper”->fist
+-Remember, always just animating base mesh of particular LoD,
+	_not_ full mesh. No of base mesh verts ~ 4*no of bones.
+
+Page 12:
+
+-Bones done just like vanilla VIPM. Index list much smaller of course.
+-Per-instance remap list from VIPM vertex bone number to anim bone number
+-Anim collapses do not have to be in any set order.
+-Single anim collapse list - no need for different ones for different VIPM levels
+	Collapses on non-existing bones ignored
+	Collapses always from higher bone to lower bone
+-Also some anim blending where area-specific ones overlap
+-Most transitions will be hand-done anyway (e.g. anim called “walktorun”),
+	so transitions few as well - only rare transitions need blending.
+-Modification of bone remap list only done when anims or sliding window level
+	change of course, so logic doesn’t need to be super-optimal.
+
+Page 13:
+
+At high LoD, usually want lots of materials
+	-Different material types (BRDF, glossy, bumpmapped)
+	-Texture size limits require multiple textures.
+At low LoD, few (or one) material
+	-Changes happen at VIPM level changes
+	-Need to have “faded” fancy effects by then, so
+		no abrupt visible change.
+	-Switch to single texture + “generic” shader.
+
+Page 14:
+
+-Worth keeping until very late - vertex lighting can be very obvious with VIPM
+-Fade sequence is:
+	-Diffuse + multiple dot3 bumpmaps (for each significant light).
+	-Diffuse + single dot3 bumpmap.
+	-Diffuse + premade "average lighting" lightmap (typically artist-made).
+	-Premade (diffuse*lightmap) single texture.
+-Cheat avoids “varnished” look - bumpy diffuse with smooth specular.
+-Do cheat for “real” envmap as well.
+-Cheat can be LoD of proper method of course.
+
+Page 15:
+
+Again, can be LoD of Dot3 bumpmapping.
+
+Page 16:
+
+-Alpha-blend method:
+	Requires a high-contrast heightfield. Most values should be 0 or 1
+	Large areas of 0.5 just gives double vision!
+	So usually can’t use raw emboss bumpmap data.
+	But can sometimes use high-contrast data for emboss bumpmapping.
+	Can also use >2 layers to improve effect.
+-EMBM method:
+	Actually, vanilla DX7 EMBM is hard to get working
+		(no interpolation of 2x2 matrix)
+	PS<1.4 hardware requires dUdV texture with dV set to 1.0, then
+		use texm3x2tex to do offset & read. Clumsy, but works.
+	On PS 1.4 hardware, read texture once to get alpha channel.
+		Scale & offset, then do dependent texture read.
+		Same texture in both reads, so cache coherency is high.
+
+Page 19:
+
+Shadowmaps proving difficult to integrate into engines.
+-Choosing gamut of each shadowmap texture tricky in complex cases.
+-Point lights often require cube-map RTT - starts to get very costly.
+-FPS games with few moving characters much easier - one per character.
+	Not really the focus of this talk!
+-Stencil-based shadows easier to integrate, but less scalable.
+
+Page 20:
+
+Artists are more than happy to play with stuff, as long as it doesn’t get tedious.
+So auto tools should do a pretty good job, then give them the satisfaction of
+beating the tools with their Mad Skillz where necessary. They _want_ control,
+but not tedium.
+
+Remember that fancy “perfect” effects only necessary on small part of scene.
+Most of scene rendered with “good enough” effects - gives big speedup for
+	little visual quality loss.
+Big list of “good enough” effects automagically gives you:
+	-good hardware compat (right back to single-texture devices).
+	-lots of control to give consistent framerate whatever the scene.
+
+

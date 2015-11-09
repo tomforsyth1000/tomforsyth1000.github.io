@@ -1,0 +1,210 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+<channel>
+<title>TomF's Tech Blog</title>
+<link>http://eelpi.gotdns.org/blog.wiki.html</link>
+<description>It's only pretending to be a wiki.</description>
+<language>en</language>
+<copyright>Copyright 2015 TomForsyth</copyright>
+<pubDate>Thu, 10 Sep 2015 15:35:13 GMT</pubDate>
+<lastBuildDate>Thu, 10 Sep 2015 15:35:13 GMT</lastBuildDate>
+<docs>http://blogs.law.harvard.edu/tech/rss</docs>
+<generator>TiddlyWiki 2.7.2</generator>
+
+<item>
+<title>NaNs cause the craziest bugs</title>
+<description>This is the story of a fun bug. The challenge for the reader here is not just to spot the bug, but to figure out why this one took me several hours to narrow down and fix, rather than being an easy 5-minute job.
+</description>
+<category>Blog</category>
+<category>Coding</category>
+<category>Debugging</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BNaNs%20cause%20the%20craziest%20bugs%5D%5D</link>
+<pubDate>Thu, 10 Sep 2015 15:28:54 GMT</pubDate>
+</item>
+
+<item>
+<title>Memory stacks and more resizable arrays</title>
+<description>Another post where I discuss things that are common inside the games industry, but don't seem to be well-documented outside it. This time - fixed-size-block pools and some optimisations for resizable arrays.</description>
+<category>Blog</category>
+<category>Coding</category>
+<category>DMT</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BMemory%20stacks%20and%20more%20resizable%20arrays%5D%5D</link>
+<pubDate>Fri, 24 Apr 2015 18:15:08 GMT</pubDate>
+</item>
+
+<item>
+<title>Premultiplied alpha part 2</title>
+<description>A long time ago I wrote a post on why Premultiplied Alpha was the right way to do blending. But there are times when traditional lerping is needed for pragmatic reasons, so here's a guide to how you can mix the two safely and responsibly.</description>
+<category>Blog</category>
+<category>Rendering</category>
+<category>Alphablending</category>
+<category>Toolchain</category>
+<category>VideoCards</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BPremultiplied%20alpha%20part%202%5D%5D</link>
+<pubDate>Wed, 18 Mar 2015 11:14:49 GMT</pubDate>
+</item>
+
+<item>
+<title>Texture coordinate origin</title>
+<description>The other day I asked Twitter a quick straw poll - UV(0,0) at top-left of texture bitmap or bottom-left? The answer will draw you in with its click-bait tractor beam.</description>
+<category>Blog</category>
+<category>Rendering</category>
+<category>VideoCards</category>
+<category>Toolchain</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BTexture%20coordinate%20origin%5D%5D</link>
+<pubDate>Fri, 27 Feb 2015 05:59:06 GMT</pubDate>
+</item>
+
+<item>
+<title>Elite Dangerous on the Rift</title>
+<description>Elite is what turned me into a graphics coder, and I'm so happy it's finally back, and in such an amazing form. And it supports the thing I'm working on - the Oculus Rift! Life just doesn't get much better. However, it's still all prototype software, so it can be a little tricky to get working. I wrote this guide to help people get the most out of Elite on the Rift.</description>
+<category>Blog</category>
+<category>Elite</category>
+<category>VR</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BElite%20Dangerous%20on%20the%20Rift%5D%5D</link>
+<pubDate>Sun, 04 Jan 2015 07:07:48 GMT</pubDate>
+</item>
+
+<item>
+<title>Display rate, rendering rate, and persistence</title>
+<description>I post I originally wrote in reply to an Eric Haines blog post, which got longer than I expected. All about 24Hz, 48Hz, 60Hz, 120Hz and 240Hz.</description>
+<category>Blog</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BDisplay%20rate%2C%20rendering%20rate%2C%20and%20persistence%5D%5D</link>
+<pubDate>Mon, 06 Oct 2014 05:38:42 GMT</pubDate>
+</item>
+
+<item>
+<title>Wrangling enums</title>
+<description>A bunch of discussions came up on Twitter recently about enums, and they were useful and interesting, but Twitter is a terrible place to archive things or get any subtlety, so I've put it here.</description>
+<category>Blog</category>
+<category>Coding</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BWrangling%20enums%5D%5D</link>
+<pubDate>Mon, 23 Jun 2014 01:38:00 GMT</pubDate>
+</item>
+
+<item>
+<title>Simple Perforce setup for the solo coder</title>
+<description>Perforce is the version-control system I've had most experience with. They have a free version for under 20 people, which means every indie or hobby coder really has no excuse for not having decent source version-control. It's fine once it's up and working, but the documentation and initial setup of a simple home system is a bunch of complete voodoo incantations. I keep forgetting how to do it myself, so I decided to finally write it all down.</description>
+<category>Blog</category>
+<category>Coding</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BSimple%20Perforce%20setup%20for%20the%20solo%20coder%5D%5D</link>
+<pubDate>Sun, 16 Feb 2014 06:29:58 GMT</pubDate>
+</item>
+
+<item>
+<title>Even more precision</title>
+<description>In 2006 I wrote a moan about double precision and dealing with absolute time and position. I thought it could do with a cleanup and a bit more info, so here's the updated version.</description>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BEven%20more%20precision%5D%5D</link>
+<category>Blog</category>
+<category>Coding</category>
+<pubDate>Tue, 04 Feb 2014 17:37:44 GMT</pubDate>
+</item>
+
+<item>
+<title>Resizable arrays without using STL</title>
+<description>STL is fine is you like that sort of thing, and I get what it's trying to do, but the actual implementation drives me up the wall. So here's my own homebrew replacement for simple resizable arrays.</description>
+<category>Blog</category>
+<category>Coding</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BResizable%20arrays%20without%20using%20STL%5D%5D</link>
+<pubDate>Thu, 19 Sep 2013 05:16:05 GMT</pubDate>
+</item>
+
+<item>
+<title>Polynomial interpolation</title>
+<description>In work recently I've been dealing with fitting polynomial curves to sets of points. But before reaching for the heavy number-crunching tools, I wanted to think about what I could do with my own limited maths, because it's always far more satisfying if you know every step of an algorithm and where it came from.</description>
+<category>Blog</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BPolynomial%20interpolation%5D%5D</link>
+<pubDate>Mon, 10 Jun 2013 06:03:26 GMT</pubDate>
+</item>
+
+<item>
+<title>How not to interview</title>
+<description>I have just finished a round of interviewing with various companies, and for the most part it was a pretty positive experience. However, last time I did this in 2004, it was not so pleasant, and I wrote up a bunch of moans for my dev friends. Worth a read if you interview people for your company.</description>
+<category>Blog</category>
+<category>Rants</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BHow%20not%20to%20interview%5D%5D</link>
+<pubDate>Sun, 19 May 2013 19:22:00 GMT</pubDate>
+</item>
+
+<item>
+<title>Sparse-world storage formats</title>
+<description>I've been writing Dwarf Minecart Tycoon for ages now, but it's always been a tiny world - 20x20x10 - which I could just fit in a a simple array. But the time has come to make it a biiiiig world. But what's the right data structure to use?</description>
+<category>Blog</category>
+<category>DMT</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BSparse-world%20storage%20formats%5D%5D</link>
+<pubDate>Thu, 08 Nov 2012 06:45:00 GMT</pubDate>
+</item>
+
+<item>
+<title>Matrix maths and names</title>
+<description>I've been doing a lot of complex transformations between various coordinate systems recently, and it's crystallised a practice I've always only done half-heartedly - naming your transformations!</description>
+<category>Blog</category>
+<category>Coding</category>
+<category>Debugging</category>
+<category>Rendering</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BMatrix%20maths%20and%20names%5D%5D</link>
+<pubDate>Mon, 17 Sep 2012 05:55:00 GMT</pubDate>
+</item>
+
+<item>
+<title>New Job</title>
+<description>I will shortly be leaving Intel. Working on Larrabee has been enormously rewarding but it's time to move on.</description>
+<category>Blog</category>
+<category>Larrabee</category>
+<category>Personal</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BNew%20Job%5D%5D</link>
+<pubDate>Sun, 24 Jun 2012 08:24:13 GMT</pubDate>
+</item>
+
+<item>
+<title>A sprintf that isn't as ugly</title>
+<description>I've always hated two things about sprintf. The format descriptor is separate from the actual values, and it's not type-safe and bugs can cause scribblers. I looked at a few other libraries and they scared me. So I did what any decent coder would do - I invented my own damn wheel.</description>
+<category>Blog</category>
+<category>Coding</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BA%20sprintf%20that%20isn't%20as%20ugly%5D%5D</link>
+<pubDate>Tue, 09 Aug 2011 02:55:00 GMT</pubDate>
+</item>
+
+<item>
+<title>Saving, loading, replaying and debugging</title>
+<description>I finally finished a fairly tedious but necessary part of [[Dwarf Minecart Tycoon]] - save and load. Why did I do this so early in the game's state, and how did I make life easier for myself?</description>
+<category>DMT</category>
+<category>Coding</category>
+<category>Blog</category>
+<category>Debugging</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BSaving%2C%20loading%2C%20replaying%20and%20debugging%5D%5D</link>
+<pubDate>Sun, 24 Jul 2011 02:16:20 GMT</pubDate>
+</item>
+
+<item>
+<title>StarTopia love</title>
+<description>Thanks for the recent random StarTopia fan love, but there's people you should thank far more than me.</description>
+<category>Blog</category>
+<category>StarTopia</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BStarTopia%20love%5D%5D</link>
+<pubDate>Thu, 21 Apr 2011 17:52:31 GMT</pubDate>
+</item>
+
+<item>
+<title>Logging, asserts and unit tests</title>
+<description>Some rambling thoughts about finding bugs as soon as possible with the least amount of work.</description>
+<category>Blog</category>
+<category>Coding</category>
+<category>Debugging</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BLogging%2C%20asserts%20and%20unit%20tests%5D%5D</link>
+<pubDate>Sun, 13 Mar 2011 12:28:25 GMT</pubDate>
+</item>
+
+<item>
+<title>Data Oriented Luddites</title>
+<description>I wade into the Data Oriented Design flame war with a can of deodorant and a lighter.</description>
+<category>Blog</category>
+<category>Coding</category>
+<category>Rants</category>
+<category>OffendOMatic</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BData%20Oriented%20Luddites%5D%5D</link>
+<pubDate>Sat, 01 Jan 2011 02:50:14 GMT</pubDate>
+</item>
+
+</channel>
+</rss>

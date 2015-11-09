@@ -1,0 +1,103 @@
+A few hindsights I had on my Meltdown 2000 talk, in no particular order:<br>
+<br>
+* My "Homebrew" subdiv surface method is probably equivalent in power and flexibility to a Bezier bicubic patch, done a different way. They may even have very similar shapes. Certainly I'm pretty sure a triangular Bezier bicubic patch (as used in N-patches) would work just as well, though with explicit control points, so you can join up sharp edges. N-patch stuff has implicit control points (from normals), which is not enough.<br>
+<br>
+So what you would do is generate your Bezier patches using the N-patch algorithm to create the six control points for each tri, and then for the sharp corners, glue the control points of the relevant patches together along the sharp edge. This will produce a sharp crease along that edge, but a surface without any holes in it. Which is what you want. This has some nice properties:<br>
+<br>
+(1) They tesselate very quickly indeed. OK, that's not very exciting in my method as-is, since all the tesselation is done at author time, and currently tesselating up to 120k tris takes about a second, which is easily fast enough. But it may be interesting for future applications.<br>
+<br>
+(2) They are smooth and for the most part C1 continuous (except at exceptional vertices, and of course creases). Although my subdiv surface method is very close to smooth, I could never prove that it actually was - it just _looked_ smooth. A mathematical thing really.<br>
+<br>
+(3) You can model patches & NURBS with them. If your artists _have_ generated stuff using NURBS and so on, then you just plug them straight in and they work. Which is nice if you are taking artwork from various different sources, or using pre-done art, such as from a models database. Note that if you want to use NURBS, you will have to generate the rational version of an N-patch, but that's pretty simple - just set all your W values to 1.0 and there you go. Hmmmm... I wonder if allowing artists to tweak vertex Ws would allow them to control things like sharpness of edges. I haven't really played with rational Bezier W values - I know that they allow creation of true conic sections, but I don't have an intuitive feel of what it is you are controlling. Might well give some nice edge-sharpness control. Interesting.<br>
+<br>
+* All the techniques are pretty much the same as the respective ones used by the D3DX library - the Quadric Error Metric-based VIPM is fundamentally the same, and the subdivision surface method is very closely related to N-patches (see previous note). So it looks like everyone is heading down roughly the same path, which has a nice "feelgood" factor to it. But I think that before any sort of smooth subdivision surface can be at all interesting, except for doing minimalist architecture, you need to be able to displace it while rendering. Smooth surfaces just aren't that cool any more, and they certainly don't look real until you have a huge number of them. And then you run into the same bottlenecks as we currently have - except you're downloading masses of control-point data rather than masses of vertex data. Plus, trying to mix smooth and sharp surfaces can be very difficult. Displacement is a must, and sadly this version of D3DX has no good concept of displacement.<br>
+<br>
+* Multi-matrix skinning can actually help do the displacement! While telling some IHV guys (you know who you are) why their multi-matrix stuff was OK for now, but didn't do what I actually wanted, which was to do a second indirection to reference base-mesh vertices, I realised that actually their hardware could do almost precisely what I wanted!<br>
+<br>
+This is using the "matrix palette" stuff that is exposed in DX8's fixed-function pipeline. You could also use the standard DX7 matrix blending stuff to do it, but it's a bit pants.<br>
+<br>
+What my method uses is the following equations:<br>
+<br>
+P() are base-mesh points.<br>
+<br>
+N() are base-mesh normals.<br>
+<br>
+i(0-2) are the three indices for a vertex into the pool of base-mesh points and normals.<br>
+<br>
+b(0-2) is the barycentric coordinate of the vertex.<br>
+<br>
+d is the displacement for the vertex.<br>
+<br>
+<br>
+P' = P(i(0)) * b(0) + P(i(1)) * b(1) + P(i(2)) * b(2)<br>
+<br>
+N' = N(i(0)) * b(0) + N(i(1)) * b(1) + N(i(2)) * b(2)<br>
+<br>
+P'' = P' + d * N'<br>
+<br>
+<br>
+Now, if we write the standard multimatrix skinning equation out, using three matrices:<br>
+<br>
+M(0-2) = skinning matrix.<br>
+<br>
+R = input vertex position.<br>
+<br>
+w(0-2) = matrix weight (with w(2) implicitly 1-w(0)-w(1))<br>
+<br>
+R'' = ( M(0) * R * w(0) ) + ( M(1) * R * w(1) ) + ( M(2) * R * w(2) )<br>
+    = ( ( M(0) * w(0) ) + ( M(1) * w(1) ) + ( M(2) * w(2) ) ) * R<br>
+<br>
+But now we remember that a matrix M is actually three vectors M.x, M.y, M.z, and expanding out the components of R as well:<br>
+<br>
+R'' = ( ( M(0).x * w(0) ) + ( M(1).x * w(1) ) + ( M(2).x * w(2) ) ) * R.x + <br>
+      ( ( M(0).y * w(0) ) + ( M(1).y * w(1) ) + ( M(2).y * w(2) ) ) * R.y +<br>
+      ( ( M(0).z * w(0) ) + ( M(1).z * w(1) ) + ( M(2).z * w(2) ) ) * R.z<br>
+<br>
+Now set R.x = 1 and R.z = 0, and you have:<br>
+<br>
+R'' = ( ( M(0).x * w(0) ) + ( M(1).x * w(1) ) + ( M(2).x * w(2) ) ) + <br>
+      ( ( M(0).y * w(0) ) + ( M(1).y * w(1) ) + ( M(2).y * w(2) ) ) * R.y<br>
+<br>
+And if:<br>
+<br>
+M(0-2).x = R(i(0-2))<br>
+M(0-2).y = N(i(0-2))<br>
+w(0-2) = b(0-2)<br>
+R.y = d<br>
+<br>
+then we can see that R'' = P''. Magic!<br>
+<br>
+So, given n-matrix blending hardware, we can do the position calculations for vertices that use n base mesh vertices. Now, obviously for 2-matrix hardware, that's not much use - we need at least three base mesh vertices. But it's quite good news for 4-matrix hardware - we can do two base-mesh tris at a time, which at high tesselation levels works out to quite a few triangles. Also remember that when changing to a different two base-mesh tris, usually two of the base-mesh vertices will be shared (think of doing a strip of base-mesh tris), so those matrices do not need to be updated, so the bandwidth is not mad.<br>
+<br>
+[Actually, with two-matrix hardware, you can still do a base-mesh tri by rearranging stuff. I won't go into detail here, because I don't think it's very efficient - you need to change both matrices every time you change base mesh, and it doesn't scale with the number of matrices available in the way that this method does. But basically you put b(0-2) in P.[x-z], put the three base-mesh vertex positions in one matrix (in the the x,y,z columns) and the three base-mesh (position+normal) values in the other, and then d goes in the vertex weight. This is probably better than nothing if you have only two matrices, and you are doing high tesselation, but I leave its implementation as an exercise to the reader :-)]<br>
+<br>
+Anyway, the 4-matrix case is not too bad, but it has a couple of problems:<br>
+<br>
+-It does only work at high tesselations. At low tesselations, you are only drawing a few tris before having to change matrices again. In this case, it is probably better to do the maths yourself, possibly using tweening instead.<br>
+<br>
+-On software pipelines, although the 4-matrix case is part of the fixed-function (i.e. DX7) pipeline, and has therefore been tuned by the CPU makers, what we are doing is fundamentally inefficient. Rememeber that actually these matrices are 4x4 matrices, and we are setting R.x to 1, and R.z and R.w to zero. That's a lot of multiplies that don't actually need to be multiplies. If you are using the software pipeline, it is far better to simply code up the Vertex Shader version and use that.<br>
+<br>
+The only time this is really any good is when you have hardware that has four matrices. In that case, the fact that we are doing lots of pointless multiplies doesn't matter. If we didn't use that hardware, it would just sit there doing nothing. Might as well use it.<br>
+<br>
+But the most interesting case is if you have hardware that has the concept of a matrix "palette". This is where you can only blend up to four matrices at any particular vertex, but you can choose which four you blend at each vertex, by providing four byte-sized indices in the vertex. In fact, all we need for this case is three matrices, not four. So each vertex has three indices, i(0-2), and does the following calculation:<br>
+<br>
+R'' = ( ( M(i(0)) * w(0) ) + ( M(i(1)) * w(1) ) + ( M(i(2)) * w(2) ) ) * R<br>
+<br>
+This of course ties in wonderfully with the indices we want. So now we can load the hardware's matrix palette up with all the matrices it can hold, one matrix per base-mesh vertex, and then fire vertices at it. Each vertex will have three indices, which are the base-mesh vertices it uses, two weights (the third is implicit), which are the barycentric coords of the vertex, and an R.y value that is the displacement. Given that matrix palette hardware typically has at least 8 matrices, and often more, you start to get very efficient indeed, even at relatively low tesselations, because you can draw a lot of tris with each DrawPrimitive call.<br>
+<br>
+From this, we can then see that on vertex-shader hardware, we can actually do even better. A matrix palette can be done fairly easily in a vertex shader, and there are vertex shaders that people have written that allow up to 24 matrices to fit in the vertex shader at once. Not bad. However, recall that there are loads of pointless multiplies we are doing - we set R.x to 1 and R.z to 0, and thus don't even use the third row of each matrix. So they can be discarded, allowing even more base-mesh vertices to be downloaded on each call. You can now start thinking of doing entire sections (e.g. a limb) of characters at a time, rather than thinking in surface patches.<br>
+<br>
+So, in my talk I said that what hardware really needed was a second indirection. I had forgotten that vertex shaders do have this indirection. It is only an indirection into the small on-board pool of values, but that pool is large enough to get considerable efficiency.<br>
+<br>
+In addition, a vertex shader (unlike the multi-matrix schemes above) can also do the interpolation of colours, UVs, etc, that are needed for the bumpmapping. For the multi-matrix schemes, those would still have had to be done by the CPU, though they are quite efficient since the maths is so simple, and the colours can be done by MMX code. But even better is if the vertex shader can do them, which it can.<br>
+<br>
+I am not sure whether the DX software vertex shader is sufficiently faster than a hand-done CPU version. Certainly, a hand-done version in well-pipelined MMX+(SSE/3Dnow) will be faster, since that is all the DX software vertex shader is, but many people do not have the time or knowledge to write such pipelines (though it is well worth spending the time to do so for small, tight routines like this). So it may be that the high-optimised DX vertex shader, even though it is quite general-purpose, may be faster than an app-side C version. Either way, to take advantage of vertex shader hardware, you certainly want to have a vertex shader written, and on older CPUs that do not have the floating-point SIMD stuff, a hand-written routine will definately be faster. So you will need both versions around anyway. So choosing which to use on something like a PentiumIII with a non-vertex-shader card is just a matter of trying both and doing some timings.<br>
+<br>
+* In the talk, I said the Catmull-Clark subdiv surface method was non-interpolating, but otherwise cool. In fact, there is an interpolating version, which would probably work well, assuming you can get sensible crease-edge data out of your modelling software. Certainly something to consider if you can stand the maths, and if the (IMHO fairly minor) differences in mesh quality really matter to you. Again, remember that your artists can tweak the bumpmap to make any sort of crease they want - the subdiv surface is just a "rough draft". Alternatively, there are algorithms to convert Catmull-Clark surfaces to Bezier patches, so you could do that step first and then subdivide using the Beziers - this removes the large data set traversal that C-C surfs typically require (though there was a very nice paper on doing fast piecewise subdivision of subdiv surfaces, rather than takling the whole data set, but it's fairly involved).<br>
+<br>
+* I forgot to mention in the slides that any places where the dodgy Lerp animation method looks obviously bad can be solved by inserting a base mesh vertex or two there, since the base mesh vertices are anmated properly. This can either be done by an artist (the method we choose, since the extra workload is very small), or automatically.<br>
+<br>
+The auto version puts the character through lots of poses (probably just plays whole animation data set) and finds the vertex position errors between the two animation methods. Where these errors are above a certain value, the base tri is tesselated once, to make a new base mesh with three more vertices, and the whole process is done again. Rinse and repeat until the error is below an acceptable level. Note that error can actually be really big before the eye notices that something is actually wrong. Remember that although the visible difference between the two methods may be big, that is only if the viewer knows what it's _meant_ to look like. On organic models, that is usually hard to tell in many cases. Both look acceptable, just different. Which is why we do it by eye rather than automatically.<br>
+<br>
+* If you as a coder are in doubt about any approximation at any stage, just put it in the code without telling anyone and see if the artists spot it! If they do, it needs fixing ("ah, that's probably a silly typo or something" you mutter), but if not - fine. This is the approach the Startopia team took with texture compression - they just put it in (all textures were compressed on disk, and if the hardware couldn't do it natively, they were decompressed at load time), and waited until the artists complained of poor quality. They never did. So after a month it was just made permanent. :-)<br>
+<br>

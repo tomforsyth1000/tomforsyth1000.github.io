@@ -1,0 +1,43 @@
+Meltdown 2001 Talk hindsights<br>
+<br>
+This talk takes the ideas introduced in the Meltdown 2000 talk, expands upon some of them, and briefly introduces a lot of scalability that is not directly related to mesh complexity.<br>
+<br>
+The take-home message is that scalability is extremely important today. The range of PC hardware that the average game has to deal with is massive (P2/300 + TNT all the way up to P4/2.4Ghz + Radeon8500 - one has something like fifteen to twenty times as much raw power than the other). If targetting consoles, you have the PS2, Gamecube and XBox to target - a large amount of difference between those platforms, and different strengths on each - why force yourself to redo artwork three times? Even on a single known platform, why render every character on-screen with 10k polys? Why not render close up characters with 50k, and distant ones with 1k - far prettier, and the same speed. Not nearly enough games use any form of LoD at all. Hopefully this talk will show people how easy some of it can be.<br>
+<br>
+<br>
+-I said in the second slide that character rendering is the big challenge - everything else is easy. That's not even close to being true of course. We're pretty good at rendering characters - people, etc. What no-one has yet captured is the huge amount of variation and clutter in the real world. Look outside almost anywhere in a city, and just think about trying to render what you see. Not the general shapes, the actual scene. Litter, bushes, trees, rust, parked cars, signs, traffic lights. And there's so much of it - current games are totally bare compared to real life.<br>
+<br>
+-I do still believe that having DX5-style shaders as an eventual fallback to _every_ shader is necessary. You would hope that at the moment (Feb 2002) we wouldn't need to support this old stuff. The Voodoo2 was released more than four years ago - surely everything has multitexture and DirectX6 drivers by now? Er... no. Intel are still selling loads of i810 and i820-based systems, which essentially have an i740 core. Single texture, no frills. S3 are still flogging integrated chipsets like mad. Admittedly most of them now seem to be Savage4-based (dual texture), but the drivers are of such shocking quality that you can't rely on half the blends actually working.<br>
+<br>
+By the way, what I mean by a "DX5-style" shader is one of the following TSS setups. All are a single stage, no multitexture. Stray from these blends even slightly, and you will have trouble. Always make sure you can fall back to one of these.<br>
+<br>
+Colour: Modulate(Texture,Diffuse); Alpha: SelectArg1(Texture,Diffuse)<br>
+Colour: Modulate(Texture,Diffuse); Alpha: Modulate(Texture,Diffuse)<br>
+Colour: Modulate(Texture,Diffuse); Alpha: SelectArg2(Texture,Diffuse)<br>
+<br>
+In addition, a lot of cards only support the following alpha-blend modes. There's not much you can do about this usually - for example in a lot of cases you absoloutely can't do without ZERO:SRCCOLOR, but just be aware of the problems.<br>
+<br>
+ONE:ZERO (i.e. no alpha blending)<br>
+ONE:ONE (additive)<br>
+SRCALPHA:INVSRCALPHA ("standard" alpha-blending)<br>
+ONE:INVSRCALPHA (premultiplied alpha-blending)<br>
+<br>
+<br>
+-Tesselation and displacement is an excellent offline tool for authoring content, even if you don't use it when actually rendering. As said in the slides, some things are very easy to make using N-patch meshes with displacements. Tesselation can be done offline to produce detailed models of any desired quality. It means that most models do not need artists to redo them when poly budgets change - just run the tesselation+displace tool with different settings. Also gives you bumpmaps for free, and of course disp.mapping if your rendering pipeline supports it.<br>
+<br>
+-I now call the "displacement" stuff "displacement compression". Disp.mapping implies that I am tesselating at runtime, which I am not, and generating extra vertices in the vertex shader, which I am not. I have simply compressed the vertices using displacement-map concepts. In most cases, the vertices are now 8 bytes. This reduces bus bandwidth massively (essential for high poly rates on the PC), and also reduces the memory required to store meshes (essential on consoles).<br>
+<br>
+-I am rather pleased with "progressive bones". It adds another scalability factor to the equation. Can now have wonderful expressive faces, lip-syncing, individual fingers, waving hair strands, etc. But the same model can reduce smoothly to a single DrawPrim call with maybe 10 bones in the distance.<br>
+<br>
+-Dot3 bumpmapping is OK, but if you have Pixel Shader hardware available, then I recommend rendering the environment lights into a small cube map (e.g. 8x8 on each side) with the CPU each frame, then using that as a sort of environment map. On PS hardware, this can be bumpmapped as well, so you get nice bumpmapping with an arbitrary number of lights. Only really supports directional lights though, because there's no positional information used. Of course a lot of point lights can be approximated by a directional light when a sensible distance from an object.<br>
+<br>
+-The specular hack is just like having a glossmap that is high where the bumpmap is smooth and low where it is rough. It's not rocket-science, but it is cheap, and suprisingly effective. It just stops the per-vertex specular gliding smoothly over bumpmapped areas - an effect that makes them look wierdly varnished.<br>
+<br>
+-Parallax texturing actually works suprisingly well on low-frequency bumpmaps. On high frequency bumpmaps it just produces a bit of a mess. You could use the high-frequency bumpmaps for lighting, and then use a filtered version for the parallax texturing.<br>
+<br>
+-Lots of games are using shadowmaps now just to cast a shadow on the ground. It is extremely easy to adapt this to ID-based shadowmaps, especially if using a Vertex Shader and a boned object. Simply sort the bones w.r.t. the lightsource and give each an ID. For each vertex the VS then picks the ID of the most influential bone (make it the first index listed) and puts that in the alpha channel. Note that the rendering order does NOT need sorting - the sorting is just so that IDs can be assigned front-to-back. There is no need to reorder any vertex data or to break the model up into multiple DrawPrim calls.<br>
+<br>
+<br>
+
+
+

@@ -1,0 +1,382 @@
+Page 4:
+
+LoD: reduces scalability problems, supposedly
+
+Page 5:
+
+Bumpmapping:
+	Which sort?
+	Compatibility nightmare.
+	Artists can’t see what they look like when authoring.
+	Artists like the control of pre-lighting textures.
+Subdiv:
+	Artists surprised by results - too fat, too thin, too smooth.
+	Prefer surface detail with quarter the tri count.
+High tri count:
+	Ages to make, ages to animate. Cumbersome.
+LoD:
+	Which sort?
+	Even best auto-reduction looks ugly at low poly counts.
+	Artists don’t have time to do reduction manually.
+	Animates badly.
+	Chews memory.
+
+Page 7:
+
+Make/animate:
+	Animators don’t need to look at high-poly model - no effort.
+Bump/displacement map:
+	Both same map.
+	Authored by SHAPE, not SHADING - real physical thing.
+	Bumpmap “for free”
+	No editing in tool itself - just a viewer. Familiar tools.
+Smooth with subdiv:
+	If pushed for time, no disp map, just smooth. Better than nothing.
+	Subdiv all done off-line - no runtime penalty.
+PM:
+	Artist has lots of control over low-tri model - what they’re good at!
+	PM is hardware T&L & streaming-friendly - minimal CPU hit.
+
+Page 11:
+
+Subdiv:
+	Doesn’t actually matter too much which method you use.
+	First approximation - artists tweak it.
+Displacement:
+	Fairly obvious - move along normal.
+Animation:
+	Standard boned, but keep it flexible for future.
+	Watch interactions with other aspects.
+VIPM:
+	Fast, hardware-friendly.
+Bumpmapping:
+	Stops VIPM lighting pops.
+	Looks cool when done right!
+	Very cheap when used with subdiv.
+
+Page 12:
+
+Linear
+	Blindingly fast!
+	Artists control displacement map
+	What rendering pipe is fundamentally
+	Future hardware-friendly?
+Catmull-Clark, Loop
+	CC has excellent control
+	Both non-interpolating - object shrinks from original, so poor
+		direct control over low-tri mesh
+Bezier
+	Includes NURBS, though they need special tools to produce.
+	Poly soup->Bezier matsh is unclear
+	Maybe later… future research
+	Can do arbitrary sample positions
+
+Page 13:
+
+Mod Butterfly
+	Zorin, Schroder, Sweldens.
+	Edge crease control unclear.
+Spherigons
+	Some edge artifacts, though solvable
+	Poor crease control
+	Very intuitive & tweakable
+	Can do arbitrary sample positions
+Homebrew
+	Basically a bodged 2D spline!
+	VERY tweakable
+	Excellent edge control
+	A bit lumpy at high tesselations
+	Mathematically unsound
+
+Page 14:
+
+Homebrew
+	Subdivide a tri, each time doing a simple 2D spline
+		on new edges using position & normal of end
+		points. Magically smooth!
+	Details on Muckyfoot website
+	Mathematically all over the place
+	Can control normals at every stage, every edge.
+	Just a first approximation for artists anyway.
+Be consistent:
+	Speed of tessellation not very important - done offline
+	All reduces to precalculated/linear at runtime anyway
+	Don’t change basis half-way through - all the art has to change!
+
+Page 15:
+
+Tri count
+	Can save only first 75% of VIPM series if worried.
+	High tesselation & VIPM can all be done over night!
+Tesselate
+	Concentrate on smoothing algo, not tess details.
+	Artists only viewing one object at a time on fast machines.
+		-fast updates, low framerates.
+	More texture == more important (e.g. faces)
+
+Page 16:
+
+Between textures:
+	Same algo - no extra maths
+	Just add stitch tris.
+	Extra tris removed very soon by PM system!
+Sharp creases
+	Could ignore it if not important to project.
+	This is important part of algo chosen.
+	Poor edge control means lots of extra artist
+		work to correct in disp map.
+	Plus, unhappy artists.
+	Sacrifice other aspects of algo for this!
+	Why I like homebrew.
+
+Page 19:
+
+Normal does not need to be exactly same normal as for lighting.
+	Smoothness & uniformity more important than correctness.
+Artists need physical displacement size concept to deal with.
+Often up/down-sample textures half-way through authoring/game.
+Need global scale tweak factor for each texture / object - ah well :-)
+Can smooth scale across base tris if abrupt scale changes worry artists (Loop).
+
+Page 20:
+
+Smooth seams
+	UV don’t match, so displacement scales don’t match.
+	Disp maps must match - but different scales!
+	Overlap sampling to smooth - but what if they _want_ a crease?
+	Average scales allow artists to copy pixels & be sure of match.
+	Do nothing - let artist sort it out with complete control?
+	Similar problem with diffuse texturing - they have learned to cope.
+	Coder’s mantra - if in doubt, let the artists deal with it. :-)
+Sharp seams
+	Projection along normals - big gap outside, overlap inside.
+	If smoothing only in locality of crease, artists can probably cope.
+	Lighting usually uses different normals anyway.
+	May need to tweak bumpmaps to keep lighting correct.
+TWEAK according to needs.
+
+Page 22:
+
+Standard bones
+	Uses existing tools.
+	Animators don’t need to import or deal with massive mesh.
+	Do need to check final result, but usually OK with experience.
+	Artists add extra base vertices to handle nasty cases.
+Any animation at all
+	Weapon cycles, face expressions, lips, hand signals.
+	Use tweening (software or hardware) for speed.
+	Current hardware skinning useless except with huge tri numbers
+	Tweening hardware coming soon.
+
+Page 23:
+
+Animate base mesh:
+	On CPU - any way you like - low numbers of verts
+	Complete flexibility
+Tess vertices:
+	On software T&L pipes, transform base vertices into camera space
+	Fundamental algo is displaced linear surface
+	3 WORD indices of base vertexes
+	2 BYTE barycentric coords, implicit third.
+	1 WORD displacement
+	Could shrink to a byte each in some cases - 6 bytes!
+Not strictly correct, but good “enough”, and very fast - show comparison
+Bumpmap:
+	Does linear interp of colours/UVs at same time with same data.
+Possible hardware support - not a mad idea!
+
+Page 24:
+
+Fundamental algo is displaced linear surface
+	3 WORD indices of base vertexes
+	2 BYTE barycentric coords, implicit third.
+	1 WORD displacement
+	Could shrink to a byte each in some cases - 6 bytes!
+Should be soluble, but I’m too thick.
+	Anneal by fixing two variables,
+	Find best solution of third.
+	Rinse & repeat as necessary.
+If anyone can solve it, please yell. :-)
+
+Page 25:
+
+VIPM inaccurate, but very very fast
+	Inaccuracy made up for by drawing >2x the tris!
+In non-animated case, CPU just plays with a few indices per frame.
+All vertices in range used - good for straight-line SIMD T&L pipes.
+	
+Page 26:
+
+Can use any animation, etc system.
+	Only indices changed.
+	They don’t need to know about VIPM system.
+	Except which vertices are used - linear range, no unused in range.
+Streaming:
+	Don’t need to know about last n vertices, indices and collapse data
+		until actually drawn.
+	If data delayed, just don’t raise LoD level until it arrives.
+	All data shared between instances.
+Vertex cache:
+	Indices in collapse order - unfriendly to vertex caches.
+	So pre-stripify lower x% of index list each time.
+	As collapses intrude into it, switch to smaller pre-ordered subset.
+	Pre-ordered sets can be shared, only “live” bit per-instance.
+	Again, stream-friendly.
+
+Page 27:
+
+Burn through the QEM maths & the implementation is a doddle.
+Because we force collapse to base mesh first, tess vertices have linearly
+	interpolated attributes & UVs. So Hoppe QEM says “no error”,
+	however we do the collapses - bin it.
+Hoppe QEM may be useful in collapsing base mesh, but usually mesh now too
+	coarse to have significant affect - looks ugly however you do it!
+Average the QEMs, instead of summing, on an edge collapse.
+	Much quicker & easier than Hoppe “memoryless” QEM.
+	Lessens problems that “memoryful” versions have.
+	Total kludge! (but works).
+Edge flags: flag base mesh edges & vertices.
+	Only collapses along & onto them allowed.
+	Careful about collapses that join two edges -
+		just vertex flags not sufficient!
+
+Page 28:
+
+Authoring:
+	Once artists can see physical displacements, they “get” it.
+	Once they have preview tool, they stop prelighting textures.
+		May require percussive guidance. :-)
+Hardware:
+	Every card needs a different blend.
+	But even Voodoo1 & Riva128 do some form of emboss.
+Expensive:
+	Tween verts done like animation.
+	Dot3 can be done with MMX in parallel with SSM/3Dnow (?)
+	Or DX8 vertex shaders can maybe do it for you.
+Per-vertex is viable:
+	Only with very high poly densities, but not touching verts
+	with CPU, so can get awesome throughput! Watch popping.
+
+Page 29:
+
+LoD pop:
+	Lighting pop more noticeable than position pop in PM.
+Dot3
+	Coloured lighting, ambient specular, etc all require extra pass,
+		but Dot3 hardware has lots of fill rate these days.
+	Object-space normal maps reportedly poor quality - not tried them.
+		Can be expensive in texture memory though.
+EMBM:
+	Can do prettier things, e.g. reflection maps, specular, etc.
+Emboss
+	For D3D lighting, pass in smoothed normals, not perturbed ones.
+	Interpolate both sets of UV coords across base poly.
+
+Page 30:
+
+Same pipe:
+	Can be done in parallel.
+Interpolate:
+	MMX in parallel with SSE/3Dnow?
+Vertex shaders:
+	Feed basis matrix in at each vertex, shader does calculation
+	Extra AGP bandwidth, but no CPU touch per-frame.
+	Shared data for all instances.
+
+Page 31:
+
+Same engine:
+	Tweaked for fast reloads of bump/disp map
+No editing:
+	Fast to code
+	No new interface to get angry about
+Auto-load:
+	Tesselation done by menus first.
+	Then edit bump/disp/diffuse/specular map.
+	Then do low tess & preview VIPM
+	Then do full tess & VIPM offline overnight.
+
+Page 32:
+
+Make maps:
+	Prelim diffuse map often made earlier, for guidance
+	Do disp map first, based on geometry.
+	Then use this to bumpmap.
+	Then do diffuse/specular textures.
+	Resists temptation to pre-light textures.
+	Can edit all maps at once of course.
+Animation:
+	Done in parallel on base mesh while maps being done.
+Small tess:
+	Quick VIPM to check quality of VIPM.
+	Animation check.
+	Insert any extra base-mesh verts.
+Full tess:
+	Can do stupidly high tess & VIPM overnight.
+	Just needs quick visual check.
+	Can be used for FMV rendering.
+	Just truncate data for game.
+
+Page 33:
+
+Extra pass with Dot3 not really a problem - Dot3 hardware has tons of fillrate.
+Skinning:
+	2 or 4 matrix skinning means constantly stopping to change matrix
+	May possibly be useful for extremely high-tri models
+	1000 tris per call = 1000 tris per base tri = >100k tri model.
+	At 60Hz, 15million tris/sec, only get 2.5 of these on-screen!
+May be faster to have fixed positions & skin them, rather than skin base verts &
+	interpolate. Doubt it though.
+
+Page 35:
+
+Multi-matrix skinning now worth it if >~16 matrices can be packed in at once
+	Whole object can be done in one or two calls.
+But does restrict animation system to conventional skinning.
+Use tweening otherwise
+	Roughly the same bus bandwidth:
+	-Multi-matrix has 3 indices & 2 blends - 3 DWORDS / vert
+	-Tween just tweens position and colour - 4 DWORDs / vert
+
+Page 37:
+
+Entirely plausible in hardware.
+Lighting & other expensive ops only done on base vertices - plenty of time
+Low extra gate count, assuming existing vertex shader
+Extra indirection is major cost - FIFOs
+Also vertex caching for speed.
+But is next logical step anyway, whatever we do (displacement maps, etc)
+
+Page 38:
+
+Varying levels in software / hardware. Hopefully all moves to hardware
+in future.
+
+Page 39:
+
+Lobby IHVs. They do listen to us!
+	Lobby now, hardware in two years.
+Lobby MS. They listen to us too.
+	Lobby now, API in a year.
+	SIMD pipes tuned by CPU partners immediately.
+	Hardware lead by API afterwards.
+	Not in the API -> far less likely in hardware.
+General idea:
+	MS / IHVs are smart guys, and can fill in the details,
+	but they need to know what we want to do and what we don’t.
+We as developers MUST plan ahead - hardware is on looooong design times.
+
+Page 42:
+
+Sub surf people:
+	Edwin Catmull & J. Clark
+	Charles Loop
+	Doo & Sabin
+	Denis Zorin, P. Schroder, W. Sweldens - Modified Butterfly
+	Pascal Volino & Nadia Magnenat Thalmann - spherigons
+
+
+
+
+
+
