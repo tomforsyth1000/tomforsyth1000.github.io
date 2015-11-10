@@ -1,0 +1,28 @@
+<h1>StarTopia Shadowbuffering Pictures</h1>
+<img src="piccies/startopia1.png">
+<p>A simple entry-level station. Note how the Collector (the glowing solar-panel-like thing slightly to the right) radiates light and shadows in all directions, even though it is just specified as a single point light. The other slightly dimmer light in the scene is a sort of "ambient general" one and is positioned somewhere slightly off the top-middle of the screen, which is why you can see some things casting double shadows of different brightnesses.</p>
+<hr>
+<img src="piccies/startopia2.png">
+<p>A closeup of the same scene from an opposite angle (the bright collector is to our left). Note again the double shadows from most things. Also note that the pixel res of the shadows is fairly consistent between the bug-eyed dude (a Grekka Targ) close up to the camera and the shadow cast onto the building at the top leftish (which is actually a Lav-o-tron) - in both cases you can see the texels of the shadowbuffer covering about four pixels at this quality setting, even though they are at very different distances from the camera, but almost identical distances from the actual light source.</p>
+<p>Also notice the purple guy with with the green hair to the right of the picture. He is a Karmarama and has four arms and has his back to us, which is why he's quite hard to parse. His hair is a bunch of Amiga-demo-style 2D sprite-bobs that are drawn procedurally (they swirl according to his mood), but yet they cast perfect shadows. Magic!</p>
+<hr>
+<img src="piccies/startopia3.png">
+<p>Just showing off - this building is in the process of being built, and one of the stages is this scaffolding phase. It's simply drawn by mapping a girder-work texture onto the normal building mesh and turning on alpha-test. And look - it casts perfect shadows, even on the white-coated two-headed scientist guys on the left! Try doing that with stencil volumes and watch your overdraw hit twenty gajillion (assuming you can solve the manifold mesh requirement somehow). This effect "just worked" from the original game by the way - there is no special shadowbuffer code in there at all.</p>
+<hr>
+<img src="piccies/startopia4.png">
+<p>Some random prettiness. All the lights you see casting shadows are ones that were in the original game. But originally, they just cast light, they didn't cast shadows. No artwork was altered during the making of this demo - the most I did was stop some lights casting shadowbuffer (e.g. the dim red lava lamp to the bottom right - the light it casts is so dim and short-range that nothing ever actually got close enough for it to cast a shadow - so just wasted effort). The big crosses cast by the two streetlamps to the upper-right are simply the shadows cast by the arms of the lamps - the actual light is in the central bulb sort of thing. So that kinda shows you that they're casting shadows in all possible directions. If there were objects above them to cast shadows onto, they'd do that properly too. The shadowing system used does not actually know that StarTopia is secretly a 2-and-a-half-D-bent-into-a-torus game - as far as it knows, everything is real arbitrary 3D.</p>
+<p>While you're here, notice the winged nearly-nude angelic-looking guy (a Dahanese Siren) on the bottom left of the picture (he works for you as a full-time prostitute in the game). Notice how you can just about see the texels in his shadow.</p>
+<hr>
+<img src="piccies/startopia5.png">
+<p>Here's a closeup of him. Same settings, I just moved the camera closer. Notice how now that the camera is much closer, he gets a lot more texels for his shadow. In fact <b>he</b> doesn't get any texels, it's the floor tiles that say how many texels they need for any shadows being cast on them - he simply renders his shadow into those buffers.</p>
+<hr>
+<img src="piccies/startopia6.png">
+<p>Same view, lower quality settings. You can see how the texels of the two shadows are aligned along different axes, because they come from two different light sources, but even though the two lights are in totally different positions (one is obviously much higher up than the other because it casts a much shorter shadow), they both get about the same texel density. This algorithm does a pleasingly good job at allocating a consistent texel density.</p>
+<hr>
+<img src="piccies/startopia7.png">
+<p>And finally a really low quality setting. This looks a bit rubbish to our trained graphics-coder eyes, but this is the sort of texel quality you'd use if the user was playing at 640x480 on a GeForce1 - imagine the tears of joy streaming down their little cherubic grubby street-urchin faces saying "oh thank you mister graphics coder - they may be low-quality shadows with texels the size of dinner plates, but they're still the bestest I've <i>ever</i> seen. And none of those 2-manifold mesh requirements neither, guvnor. Gizza quid or I'll let your tires down when your back's turned."</p>
+<br>
+<a href="startopia.html>Back</a>
+
+
+

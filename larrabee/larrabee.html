@@ -1,0 +1,59 @@
+<h1>Larrabee information</h1>
+
+<p>All this information is public and has been published elsewhere, but I thought I'd put as much of the stuff I know about in one place for easy reference.</p>
+
+<p>
+Larrabee is also known by multiple other codenames:
+Intel Multiple Integrated Core, "Intel MIC" (pronounced "Mike"): the name for the technology as a whole, as distinct from Core or Atom.
+Knights Ferry, Knights Corner, etc: names of the chunk of silicon (not the board, connectors, components, etc).
+Aubrey Isle, Angel Isle, etc: names of the board+silicon+components - the whole product.
+</p>
+
+<h2>Official Intel Knights Corner documentation</h2>
+
+<p><a href="http://software.intel.com/en-us/blogs/2012/06/05/knights-corner-open-source-software-stack/">Open-source stack, compiler toolchain and documentation</a> - first released June 2012.
+<p><a href="http://software.intel.com/en-us/blogs/2012/06/05/knights-corner-micro-architecture-support/">Micro-architectural documentation</a> - first released June 2012:</p>
+<p><a href="http://software.intel.com/en-us/forums/showthread.php?t=105443">A collection of resources and downloads</a>. In particular, note this includes a link to the Instruction Set Reference Manual, which is probably the most detailed info a coder could need.</p>
+
+<h2>Siggraph 2008</h2>
+
+<p><b><a href="larrabee_manycore.pdf">Larrabee: A Many-core x86 Architecture for Visual Computing</a></b>: Larrabee's first real showing to the world. The paper was origianlly about twice as long and we had to chop it down severely to fit to the required length. If some things seem overly simplified - that's why. We tried to add the info back in in subsequent presentations.</p>
+<h3><a href="http://s08.idav.ucdavis.edu/">Beyond Programmable Shading Course</a></h3>
+<p><b><a href="Larrabee Siggraph 2008 Forsyth.zip">Larrabee Graphics Architecture: Software is the New Hardware</a></b>: I go over the basics of how we do in software what everyone else does in hardware, and how we can be more flexible and general than a standard GPU.</p>
+<p><b>Programming Larrabee: Beyond Data Parallelism</b>: Aaron Lefohn on how to use Larrabee as a general-purpose (i.e. non-GPU) machine and the various tricks with dealing with so many threads.</p>
+<p><b>Beyond Data Parallel: Advanced Rendering on Larrabee</b>: Matt Pharr on how we can take the standard rendering pipeline I talked about, and open it up with user-configurable pipelines and new features.</p>
+<p><b>How GPU Shader Cores Work</b>: Not specifically about Larrabee, Kayvon Fatahalian has an excellent comparative GPU anatomy class. Even if you think you know, this is very illuminating and cuts through a lot of the sillier marketing buzzwords and shows that underneath <a href="http://www.amd.com">red</a> <a href="http://www.nvidia.com">green</a> and <a href="http://www.intel.com">blue</a> are all very similar.</p>
+<p>Also see the <a href="http://sa08.idav.ucdavis.edu/">Siggraph Asia version of this course</a>, which has some significantly different takes on some of this info.</p>
+
+<h2>GDC 2009</h2>
+<p><a href="Larrabee GDC 2009.zip"><b>Rasterization on Larrabee</b> and <b>SIMD Programming With Larrabee</b></a>: Michael Abrash and I doing our double-act. We both talk about the instruction sets, Michael talks about the hierarchical descent rasterisation algorithm, and I talk about how we do basic language structures such as conditionals and flow control with our 16-wide vector units. We were both absurdly proud to be able to finally talk about the architecture we'd worked on for so long - it's not every programmer that gets to design their own instruction set.</p>
+
+<h2>Dr. Dobb's Journal</h2>
+<p><a href="http://www.ddj.com/architect/216402188">A First Look at the Larrabee New Instructions</a>: Michael Abrash's article with all the details of the instruction set.</p>
+<p><a href="http://www.ddj.com/architect/217200602">Rasterization on Larrabee</a>: Michael Abrash goes into more detail on the rasterisation architecture.</p>
+
+<h2>Siggraph 2009</h2>
+<h3><a href="http://s09.idav.ucdavis.edu/">Beyond Programmable Shading Course</a></h3>
+
+<p>Deliberately a much less vendor-centric talk this year, it's all excellent stuff, including an update of Kayvon's GPU anatomy talk. The only Larrabee-specific talk was:</p>
+<p><b>Innovating in a Software Graphics Pipeline</b>: Paul Lalonde on using the flexibility of fully general-purpose cores to extend the existing rendering pipeline.</p>
+
+<h2>Stanford EE820 course 2010</h2>
+<p><a href="Standford Forsyth Larrabee 2010.zip">The Challenge of Larabee as a GPU</a> and <a href="http://www.stanford.edu/class/ee380/winter-schedule-20092010.html">video of the talk</a>: confusingly I gave the slides the same title as my GDC 2009 talk - sorry about that. It is loosely based on that talk, but includes a guide to high performance code design and how those principles shaped the rendering pipeline.</p>
+
+<h2>International Supercomputing Conference 2010</h2>
+<p><a href="http://download.intel.com/pressroom/archive/reference/ISC_2010_Skaugen_keynote.pdf">Petascale to Exascale</a>: starting from slide 32 there's Pradeep Dubey's presentation on the current version of Larrabee codenamed "Knight's Ferry", including details on core counts (32) and frequency (1.2GHz)</p>
+
+<h2>Misc</h2>
+
+<p><a href="http://en.wikipedia.org/wiki/Larrabee_%28microarchitecture%29">Larrabee at Wikipedia</a></p>
+
+<p><a href="http://software.intel.com/en-us/articles/prototype-primitives-guide/">C++ Protoype Primtives Library</a>: basically a set of Larrabee intrinsics, but they cross-compile to existing platforms. It's just a C header file (no binary) so you can #include it pretty much anywhere and get prototyping LRBNI code instantly. NOTE - this is rather out of date and not well-supported any more. Historically interesting for the curious, but otherwise not that useful.</p>
+
+<hr>
+
+<p><a href="http://www.eelpi.gotdns.org/">Home</a></p>
+
+
+
+
