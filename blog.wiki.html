@@ -860,9 +860,10 @@ Your mission, should you choose to accept it, is to go out and find the wheel th
 <div title="Added some hindsights and notes on Spherical Harmonics" modifier="TomForsyth" created="200701170133" modified="200701170133" tags="Blog Rendering Research SphericalHarmonics">
 <pre>Someone prodded me about this the other day, so I thought I should get on and do it. I gave a GDC 2003 talk about SH, but I was never really happy with it - half an hour isn't really enough to cover it well. I haven't changed the slides, but now I have some notes for it. I corrected an error, finally wrote those elusive fConstX values down, but mainly I talk about some surrounding details about the console implementation I actually used it in - what is probably the coolest bit of all - or at least it's the bit the artists really liked about the new system. [[Spherical Harmonics in Actual Games notes]]</pre>
 </div>
-<div title="All blog entries" modifier="TomForsyth" created="200710281707" modified="201509101533" tags="Blog" changecount="13">
+<div title="All blog entries" modifier="TomForsyth" created="200710281707" modified="201512010022" tags="Blog" changecount="14">
 <pre>The rest have been removed from the front page to save space. Here are all my blog entries in chronological order:
 
+[[The sRGB learning curve]]
 [[NaNs cause the craziest bugs]]
 [[Memory stacks and more resizable arrays]]
 [[Premultiplied alpha part 2]]
@@ -1079,8 +1080,8 @@ I happen to think that OOP is overused. In particular I think OOP is used when t
 
 The other thing I see is people thinking DOD and OOP are opposite ends of the spectrum. This is C++'s fault again, though to be fair a bunch of other ~OOPy languages screw it up as well. In C++ when you have an object (a real game object that is - like a tank or a person) with a bunch of member values such as (position, orientation, health, ammo), it puts all those values contiguous in memory. But DOD says that the rendering only cares about the first two items, so why are you polluting your caches with the other two when rendering? You should have two separate arrays (pos+orient) and (health+ammo) and have one object reference separate items in each array. That's actually totally fine by OOP - all it says is that you want to be able to type obj-&gt;pos and obj-&gt;ammo, you want to be able to call obj1-&gt;~ShootAt(obj2) and so on - it doesn't say anything at all about how the data structures should be laid out. So in theory DOD and OOP should be completely compatible - OOP is a design and syntax philosophy, while DOD cares about data layout and traversal order. An example of a language where these two concepts are kept separate are databases - how you access the data (i.e. views/queries) is decoupled from how the data is stored. Unfortunately, C++ makes it really difficult to separate data layout from syntax. I suspect you can do it with gratuitous overloading and/or templating, or you can force everything to use accessor functions, but then the maintainability of the code plummets rapidly. So yes, //in C++// DOD and OOP tend to tug in different directions. But again, that's just K&amp;R&amp;S kicking you in the nuts. You really should be used to it by now.</pre>
 </div>
-<div title="DefaultTiddlers" modifier="TomForsyth" created="200512211000" modified="201509101532" tags="systemTiddlers" changecount="15">
-<pre>[[HelloThere]] [[NaNs cause the craziest bugs]] [[Memory stacks and more resizable arrays]] [[Premultiplied alpha part 2]] [[Texture coordinate origin]] [[Elite Dangerous on the Rift]] [[Display rate, rendering rate, and persistence]] [[Wrangling enums]] [[Simple Perforce setup for the solo coder]] [[Even more precision]] [[Resizable arrays without using STL]] [[Polynomial interpolation]] [[All blog entries]]</pre>
+<div title="DefaultTiddlers" modifier="TomForsyth" created="200512211000" modified="201512010022" tags="systemTiddlers" changecount="16">
+<pre>[[HelloThere]] [[The sRGB learning curve]] [[NaNs cause the craziest bugs]] [[Memory stacks and more resizable arrays]] [[Premultiplied alpha part 2]] [[Texture coordinate origin]] [[Elite Dangerous on the Rift]] [[Display rate, rendering rate, and persistence]] [[Wrangling enums]] [[Simple Perforce setup for the solo coder]] [[Even more precision]] [[All blog entries]]</pre>
 </div>
 <div title="Deterministic gameplay" modifier="TomForsyth" created="201107231933" modified="201107231933" tags="DMT Coding Blog Debugging">
 <pre>...in progress...
@@ -3631,6 +3632,143 @@ Sean Barrett has an even more extreme version of compression. His presentation w
 So the two systems (disk-&gt;sysmem and sysmem-&gt;vidmem) are largely orthogonal, and indeed you don't need the cunning visibility feedback or page-table-based virtual texturing methods to get some of the benefits. One thing I always wanted to try adding to the streaming system was this idea of the two-level cache. In Blade II we did do a quick'n'dirty zlib decompression of all data coming from the disk, but that happened the instant the data was loaded. What you'd want to do is only do that decompression when the texture was actually needed for rendering, but otherwise leave it in memory still compressed. ~DXTn will get around a 2:1 compression with zlib, so it's a worthwhile thing to do, and of course it's lossless. Mesh data compresses even better, and there's some very clever schemes for compressing things like index buffers. Another obvious trick is that normal maps are often rendered using ~DXT5 textures with the U channel in the green and the V channel in the alpha, with the red and blue channels unused (though this trick isn't necessary when you have the ~BCn formats available). Clearly the compressed version can discard those extra channels.
 
 And you can go much further and start generating texture on the fly - procedural generation, aging effects, dynamic scratches, bullet holes, etc. I wrote an article in Game Programming Gems 3 called &quot;Unique Textures&quot; about this that I should probably webify one day.</pre>
+</div>
+<div title="The sRGB learning curve" creator="TomForsyth" modifier="TomForsyth" created="201512010011" modified="201512010021" tags="Blog Coding Rendering VideoCards Alphablending Oculus" changecount="9">
+<pre>(this is also posted on [[GameDevDaily|https://gamedevdaily.io/]])
+
+Gamma encoding is a way to efficiently use the limited number of bits available in displays and buffers. For most monitors and image formats, we have 8 bits per channel. The naive way to distribute them would be to encode physical intensity (i.e. number-of-photons-per-second) linearly. However, the human eye responds to photons in a more logarithmic way, so a linear distribution gives too many shades in the brighter areas and not enough shades in the darker ones, causing visible banding.
+
+If instead the 256 values are distributed according to a power law - typically somewhere in the range 2.0-2.5 - so that there are more shades assigned to darker areas than bright ones - the perceived intensity changes are more evenly distributed.
+
+As it happens, this power law is closely matched to how the electron gun of a CRT responds to signals. This happy match between the CRT's mechanics and the eye's response made everyone very happy. The hardware was simple, and the distribution of precision matched human perception well. That reasoning has vanished now, but the legacy remains, and as legacies go it's actually a pretty good one.
+
+''Gamma 2.2''
+
+The simplest and most common form of power law suitable for encoding is gamma 2.2. That is, the relationship between photon count and encoding value (if they are both mapped to the 0-1 range) is:
+
+photons = power(encoding, 2.2)
+encoding = power(photons, 1/2.2)
+
+It is really easy to get these switched around when doing conversions - I do it all the time. The way to help think about it is - what happens to the encoded value 0.5? We know that we want to give more encoding space to darker shades, so an encoded value of 0.5 should produce significantly fewer photons than half the full amount. And to check using the first equation: power(0.5, 2.2) = 0.22, which is indeed a lot less than half.
+
+Going the other way, a photon count of half the maximum appears a lot brighter than half, so we want the encoding of that 0.5 to be high on the scale. And indeed using the second equation: power(0.5,1/2.2) = 0.73.
+
+This has the (I think) counter-intuitive result that to go FROM linear TO gamma, you actually use the INVERSE of the &quot;gamma power&quot;. So shouldn't it really be called &quot;gamma 0.45&quot; rather than &quot;gamma 2.2&quot;? Well, whatever, the convention is established, and we need to deal with it.
+
+2.2 is certainly not the only sensible gamma value. People tune their monitors to all sorts of different gamma curves for various reasons. Apple Macs used 1.8 before 2009, and photographic film can follow all sorts of curves, many of them not simple power equations. However, the world has slowly settled towards something around 2.2 as a reasonable standard, but with a little twist.
+
+''What is sRGB?''
+
+sRGB is a slight tweaking of the simple gamma 2.2 curve. If you plot them both on a graph, they look almost identical. The formal equation for sRGB is:
+
+{{{
+float D3DX_FLOAT_to_SRGB(float val)
+{ 
+    if( val &lt; 0.0031308f )
+        val *= 12.92f;
+    else
+        val = 1.055f * pow(val,1.0f/2.4f) - 0.055f;
+    return val;
+}
+}}}
+
+(this code is taken from the ~DirectX utility file ~D3DX_DXGIFormatConvert.inl which used to be part of the ~DirectX SDK, but is now somewhat in limbo. But it should be in every DX coder's toolbox, so just search for it and download it!)
+
+As you can see, at very low values, sRGB is linear, and at higher values it follows a pow(2.4) curve. However, the overall shape most closely follows a pow(2.2) curve. The reason for the complexity is that a simple power curve has a gradient of zero at the input/output value zero. This is undesirable for a variety of analytical reasons, and so sRGB uses a linear relationship to approach zero.
+
+(the broader sRGB standard also has a bunch of gamut and colour-transform specifications, but we'll ignore those and just focus on the gamma-curve part for now, since that is what concerns us for graphics rendering)
+
+''How different is sRGB from gamma 2.2''
+
+It is very tempting to ignore the two-part nature of sRGB and just use pow(2.2) as an approximation. When drawn on a graph, they really are very very close - here you can just about see the dotted red line of gamma 2.2. peeping out from behind the solid blue sRGB line:
+
+[img[gamma22_vs_sRGB.png]]
+
+However, when actually used to display images, the differences are apparent, especially around the darker regions, and your artists will not be happy if you display one format as the other! Here is an image of several colour ramps from a  Shadertoy (https://www.shadertoy.com/view/lsd3zN) used to illustrate the precision of linear, sRGB, and gamma 2.2. Note this is simulating 6 bits per channel to highlight the precision differences. The three bars for each colour ramp are linear on the left, sRGB in the middle, and gamma 2.2 on the right. As you can see, although gamma 2.2 and sRGB are similar, they are certainly not the same.
+
+[img[colour ramps.png]]
+
+Don't skimp here - do it right. ~GPUs are impressively fast at maths these days, and the speed difference between proper sRGB and pow(2.2) is trivial in most cases. In most cases you will actually be using the built-in hardware support, making proper sRGB even cheaper to use.
+
+''It's not a gamma curve, it's a compression format''
+
+The important thing to remember when adopting sRGB, or indeed any gamma representation, is that it is not a sensible place to do maths in. You can't add sRGB numbers together, or blend them, or multiply them. Before you do any of that, you have to convert it into a linear space, and only then can you do sensible maths.
+
+If it helps, you can think of sRGB as being an opaque compression format. You wouldn't try to add two ZIP files together, and you wouldn't try to multiply a ~CRC32 result by 2 and expect to get something useful, so don't do it with sRGB! The fact that you can get something kinda reasonable out is a red herring, and will lead you down the path of pain and deep deep bugs. Before doing any maths, you have to &quot;decompress&quot; from sRGB to linear, do the maths, and then &quot;recompress&quot; back.
+
+It is also important that you do not think of sRGB data as being &quot;in gamma-space&quot;. That implies the shader has done some sort of gamma transform when using the data - it has not! The shader writes linear-space values, and the hardware &quot;compresses&quot; to sRGB. Later, when reading, the hardware will &quot;decompress&quot; from sRGB and present the shader with linear-space values. The fact that the sRGB &quot;compression format&quot; resembles the gamma 2.2 curve is not relevant when thinking about what the data means, only when thinking about its relative precision. For those of you familiar with the binary format of floating-point numbers, we do not think of them as being &quot;gamma 2.0&quot; - they are still just linear values, we just bear in mind that their precision characteristics are similar to those of a gamma 2.0 curve.
+
+''Hardware support for sRGB on the desktop''
+
+All remotely modern desktop ~GPUs have comprehensive and fast support for sRGB. It has been mandatory since ~DirectX10 in 2008, so there's been plenty of time for them to get this right.
+
+When you bind an sRGB texture and sample from it, all the pixels are converted from sRGB to linear, and THEN filtering happens. This is the right way to do things! Filtering is a mathematical operation, so you can't do it to the raw sRGB values and expect to get the right result. Hardware does this correctly and very quickly these days.
+
+Similarly, when rendering to an sRGB surface, the shader outputs standard linear data. If alpha-blending is enabled, the hardware reads the sRGB destination data, converts it to linear values, performs the alpha-blending in linear space, and then converts the result into sRGB data and writes it out.
+
+To say it again for emphasis, at no time do we deal with &quot;gamma-space&quot; data - we can continue thinking of sRGB as an opaque compression format that the hardware deals with for us on both read and write.
+
+''Gamma is not a new thing, in fact it's the old thing!''
+
+It is important to note that gamma-space images are not a new thing. Until about 1990, all images were gamma space. Monitors were (and still are) gamma-space display devices, and so all images were implicitly gamma, and all image operations were as well. Even today all common image formats (GIF, JPEG, PNG, etc) are assumed to be in gamma space. This is typically 2.2, though some formats are so old they can't even specify it - the gamma curve is just assumed to be whatever your monitor is!
+
+Academics certainly did know this was &quot;wrong&quot;, but there were no available clock cycles or spare transistors to do it right, and there were plenty of other image problems to deal with first, like basic alpha blending and texture filtering. And since the input textures were in gamma space, and the output data was displayed on a gamma-space monitor, it all kinda matched up. The obvious problem came along with lighting. People tended to calculate lighting in linear space (which is fine), but then they would multiply gamma-space texture data with linear-space lighting data, and then show the result on a gamma-space monitor. This multiply is technically wrong - but until about 2002 nobody really cared enough to worry about it.
+
+Once our rendering pipelines hit high enough quality, and hardware had enough gates to spare, gamma correction and sRGB were added to the hardware. However, it's important to understand that all along, these images had been sRGB (or at least in gamma space) - we had just never had the hardware support available, and so we ignored it. But the concept of gamma-space buffers has been there all along. In fact the NEW thing invented by the High Dynamic Range pipeline is the concept of buffers in linear space! This means that if you're starting to port an existing pipeline to HDR and you're trying to decide whether a given buffer should be declared as sRGB or linear, the answer in 90% of the cases is sRGB.
+
+Technically, this also includes the final framebuffer. Given the choice between a linear format and an sRGB format, sRGB is a much much closer match to the response of a real monitor than linear. However, even better is if the app performs an explicit tone-mapping step and matches the gamma response of the monitor more precisely (since as mentioned, sRGB and gamma 2.2 are slightly different). As a result, and for backward-compatibility reasons, ~OSes expect apps to provide them with a buffer that is declared as a linear format buffer, but which will contain gamma-space data. This special case is extremely counter-intuitive to many people, and causes much confusion - they think that because this is a &quot;linear&quot; buffer format, that it does not contain gamma-space data.
+
+I have not tried to create sRGB or higher-precision framebuffers to see what the OS does with them. One option is that it still assumes they are in the same gamma space as the monitor. Another would be to assume they really are in linear space (especially for floating-point data) and apply a gamma-2.2 ramp (or thereabouts) during processing. It would be an interesting experiment to do, just be aware that the results are not obvious.
+
+''Oculus Rift support''
+
+The Oculus Rift (desktop) support for sRGB buffers is somewhat different to the standard OS support. Unlike fullscreen display on a monitor, the application does not supply a framebuffer that is directly applied to the Head Mounted Display. Instead, the app supplies buffers that then have distortion, chromatic aberration, and a bunch of other post-processing operations applied to them by the SDK and Oculus' Display Service before they can be shown on the HMD. Oculus have been very careful with quality and calibration, and the Display Service knows a great deal about the HMD's characteristics, so we can apply a very precise gamma ramp as part of the distortion process.
+
+Because the buffers supplied by the app must be filtered and blended as part of the distortion and chromatic aberration processing, and filtering is maths, it is important that the data in the buffers is in linear space, not gamma space, because you can only do maths correctly in linear space. Starting with version 0.7, the Oculus SDK expects the application to supply data in linear space, in whatever format the buffer is declared as. The Display Service will apply the required filtering and distortion, and then apply a precise gamma curve to match the actual response of the HMD. Because we know the precise characteristics of the display, we also play various tricks to extend its precision a little. We support most standard image formats, including float16, as input buffers - so don't be afraid to feed us your HDR data. 
+
+This means the application does not need to know the exact gamma response of the HMD, which is excellent. But it does mean some applications will get a surprise. They are used to the OS accepting a buffer that is declared as a &quot;linear&quot; buffer, but then silently interpreting that data as gamma-space (whatever gamma the monitor is set to). But now, if the buffer is declared as a linear buffer, the Display Service takes the application literally and interprets the data as if it was indeed in linear space, producing an image that is typically far brighter than expected.
+
+For an application that is fully gamma-aware and applying its own gamma curve as a post-process, the solution is simple - don't do that! Leave the data in linear space in the shader, do not apply a gamma ramp (tone-mapping and brightness correction are fine, just remove the linear-to-gamma part), write the data to an sRGB or HDR surface to preserve low-end precision, and the Display Service will do the rest. Again, it is important to remember that if using an sRGB surface, it is not &quot;in gamma space&quot; - it is still a surface with data in linear-space, it is just that its representation in memory looks very similar to a gamma curve.
+
+For an application that is not gamma-aware, and that has been happily (if naively) using gamma data throughout its entire shader pipeline forever, the solution is only a tiny bit more complex. Here, the application uses an sRGB buffer, but creates a rendertarget view that pretends the buffer is linear, and uses that to write to it. This allows the shaders to continue to produce gamma-space data the way they always have. Because the rendertarget view is set to linear, no remapping is performed while writing to the surface, and gamma-space data goes directly to memory. But when the Display Service reads the data, it interprets it as sRGB data. Because sRGB is very close to a gamma 2.2 representation, this works out almost perfectly - the Display Service reads the gamma-space data, the hardware converts it to linear-space, and then filtering and blending happens as it should. This process is also explained in the Oculus SDK docs. It is a hack, but it works well, and is much simpler than converting the application to use a fully gamma-aware pipeline from start to end.
+
+''Alternatives to sRGB''
+
+sRGB is a great format, but it's limited to 8 bits per channel. What if you want a little more precision? This subject could occupy a blog post all by itself (and might well do in the future!), but here's a brief list of interesting alternatives:
+
+* float16. Simple, robust, and excellent API and platform support. Sadly it's significantly larger and so can cause performance problems.
+
+* 10:10:10:2 linear. Looks promising, however note that it has less precision in the dark areas than sRGB! In fact because at the low end sRGB is a line with slope 1/12.92, it effectively has about 3-and-a-half-bits of extra precision, making it almost as good as 12-bit linear!
+
+* 10:10:10:2 gamma 2.0. This uses the standard 10:10:10:2 format, but you apply the gamma 2.0 manually in the shader - squaring the data after reading, and taking the square root before writing it. This gives significantly higher precision than 8-bit sRGB throughout the range. However, because the square and square-root are done in the shader, texture filtering and alpha-blending will not work correctly. This may still be acceptable in some use cases.
+
+* float11:float11:float10. Similar to float16 but smaller and less accurate. Note that unlike float16 it cannot store negative numbers. I have not used this myself, but it looks useful for the same sort of data as sRGB stores.
+
+* Luma/chroma buffers. This is a really advanced topic with lots of variants. One example is transforming the data to ~YCgCo and storing Y at higher precision than Cg and Co. Again, filtering and alpha blending may not work correctly without some effort.
+
+''Cross-platform support''
+
+On the desktop it's pretty simple. Although sRGB support was introduced in previous versions, ~DirectX10 finally required full, correct, fast support. As a result all useful graphics cards shipped since 2008 (in both PC and Mac) have included excellent sRGB support and for all real-world purposes you can regard support as being free.
+
+I don't know the details of Nintendo's hardware, but ~PS4 and Xbox One have the same high-quality sRGB support as their PC counterparts. ~PS3 does sRGB conversion before alpha-blending, so the blending is done in gamma space, which is not quite right. And ~Xbox360 was notorious for having a really terrible approximation of sRGB - while better than linear, it was a totally different-shaped response to actual sRGB, and required special authoring steps to avoid significant artefacts.
+
+On mobile, John Carmack informs me that &quot;Adreno and Mali are both very high quality. There is a small perf penalty on the Adreno Note 4, none on newer ones.&quot; Unlike ~DirectX10, mobile parts are permitted to perform sRGB conversion after texture filtering, rather than on each raw texel before filtering. This is much cheaper in hardware, but can cause slightly incorrect results. It is unclear which parts, if any, actually take this shortcut, but it's something to watch out for. Also note that the Oculus mobile SDK handles sRGB slightly differently than on desktop, so check the deocs for details.
+
+''Simple rules to follow when making a pipeline sRGB-correct''
+
+* Any image format you can display on a monitor without processing (e.g. in ~MSPaint or a browser) is almost certainly in either gamma 2.2 or sRGB space. This means ~GIFs, ~JPEGs, ~PNGs, ~TGAs, ~BMPs, etc. The same is true of anything that an artist made, coming out of a paint package.
+
+* Any time you are storing &quot;thing that looks like a picture&quot; in 8 bits per channel, use sRGB. It will give you much less banding in the dark areas. But always use the hardware to &quot;decompress&quot; to linear before doing anything maths-like with the data (e.g. in a shader).
+
+* Any time you are storing &quot;thing that is mathy&quot; e.g. lookup tables, normal maps, material ~IDs, roughness maps, just use linear formats. It is rare that sRGB compression will do what you want without deeper thought.
+
+* Lightmaps and shadowmaps are an interesting case. Are they &quot;like a picture&quot; or not? Opinions differ, and some experimentation may be required. Similarly specular maps - sRGB may or may not do what you want depending on context and content. Keep your pipeline flexible, and try it both ways.
+
+* Floating-point formats are conceptually linear, and no conversion is needed for them, you can just use the values in maths immediately. However, the way floats are encoded gives you many of the precision advantages of gamma 2.0 format, so you can safely store &quot;things that look like pictures&quot; in floating point formats and you will get higher precision in darker areas.
+
+''In conclusion''
+
+Hopefully this has given you an overview of the occasionally confusing world of sRGB and gamma-correct rendering. Don’t worry — I’ve been doing it a while and I still get confused at times. Once you know the right lingo, you will be forever correcting others and being a real pedant about it. But the persistence pays off in the end by having robust, controllable colour response curves that don’t suddenly do strange things in very bright or dark areas. In VR, when used with a well-calibrated HMD and display software, carefully controlling the colour spaces of your data and pipeline can give the user more convincing and realistic experiences.</pre>
 </div>
 <div title="TheWife" modifier="TomForsyth" created="200604122304" modified="200604122316">
 <pre>Louise Forsyth (nee Rutter) is my //darling// wife (dear, please stop peering over my shoulder). We're coming up to our 12th anniversary together, and just past our 2nd year married. Living in sin was such fun, but it's all over now. Conventional at last. She's meant to be a vet, but the US authoritays don't realise that UK cats and dogs are uncannily similar to US cats and dogs and want her to pass some more exams. When my mum told me that a Cambridge degree was the key that unlocked the world, I believed her. They fuck you up, your mum and dad :-)
