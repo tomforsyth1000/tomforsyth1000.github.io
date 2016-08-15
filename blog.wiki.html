@@ -860,9 +860,10 @@ Your mission, should you choose to accept it, is to go out and find the wheel th
 <div title="Added some hindsights and notes on Spherical Harmonics" modifier="TomForsyth" created="200701170133" modified="200701170133" tags="Blog Rendering Research SphericalHarmonics">
 <pre>Someone prodded me about this the other day, so I thought I should get on and do it. I gave a GDC 2003 talk about SH, but I was never really happy with it - half an hour isn't really enough to cover it well. I haven't changed the slides, but now I have some notes for it. I corrected an error, finally wrote those elusive fConstX values down, but mainly I talk about some surrounding details about the console implementation I actually used it in - what is probably the coolest bit of all - or at least it's the bit the artists really liked about the new system. [[Spherical Harmonics in Actual Games notes]]</pre>
 </div>
-<div title="All blog entries" modifier="TomForsyth" created="200710281707" modified="201512010022" tags="Blog" changecount="14">
+<div title="All blog entries" modifier="TomForsyth" created="200710281707" modified="201608151714" tags="Blog" changecount="15">
 <pre>The rest have been removed from the front page to save space. Here are all my blog entries in chronological order:
 
+[[Why didn't Larrabee fail?]]
 [[The sRGB learning curve]]
 [[NaNs cause the craziest bugs]]
 [[Memory stacks and more resizable arrays]]
@@ -1080,8 +1081,8 @@ I happen to think that OOP is overused. In particular I think OOP is used when t
 
 The other thing I see is people thinking DOD and OOP are opposite ends of the spectrum. This is C++'s fault again, though to be fair a bunch of other ~OOPy languages screw it up as well. In C++ when you have an object (a real game object that is - like a tank or a person) with a bunch of member values such as (position, orientation, health, ammo), it puts all those values contiguous in memory. But DOD says that the rendering only cares about the first two items, so why are you polluting your caches with the other two when rendering? You should have two separate arrays (pos+orient) and (health+ammo) and have one object reference separate items in each array. That's actually totally fine by OOP - all it says is that you want to be able to type obj-&gt;pos and obj-&gt;ammo, you want to be able to call obj1-&gt;~ShootAt(obj2) and so on - it doesn't say anything at all about how the data structures should be laid out. So in theory DOD and OOP should be completely compatible - OOP is a design and syntax philosophy, while DOD cares about data layout and traversal order. An example of a language where these two concepts are kept separate are databases - how you access the data (i.e. views/queries) is decoupled from how the data is stored. Unfortunately, C++ makes it really difficult to separate data layout from syntax. I suspect you can do it with gratuitous overloading and/or templating, or you can force everything to use accessor functions, but then the maintainability of the code plummets rapidly. So yes, //in C++// DOD and OOP tend to tug in different directions. But again, that's just K&amp;R&amp;S kicking you in the nuts. You really should be used to it by now.</pre>
 </div>
-<div title="DefaultTiddlers" modifier="TomForsyth" created="200512211000" modified="201512010022" tags="systemTiddlers" changecount="16">
-<pre>[[HelloThere]] [[The sRGB learning curve]] [[NaNs cause the craziest bugs]] [[Memory stacks and more resizable arrays]] [[Premultiplied alpha part 2]] [[Texture coordinate origin]] [[Elite Dangerous on the Rift]] [[Display rate, rendering rate, and persistence]] [[Wrangling enums]] [[Simple Perforce setup for the solo coder]] [[Even more precision]] [[All blog entries]]</pre>
+<div title="DefaultTiddlers" modifier="TomForsyth" created="200512211000" modified="201608151714" tags="systemTiddlers" changecount="17">
+<pre>[[HelloThere]] [[Why didn't Larrabee fail?]] [[The sRGB learning curve]] [[NaNs cause the craziest bugs]] [[Memory stacks and more resizable arrays]] [[Premultiplied alpha part 2]] [[Texture coordinate origin]] [[Elite Dangerous on the Rift]] [[All blog entries]]</pre>
 </div>
 <div title="Deterministic gameplay" modifier="TomForsyth" created="201107231933" modified="201107231933" tags="DMT Coding Blog Debugging">
 <pre>...in progress...
@@ -1176,8 +1177,10 @@ The point of this is to do things I've not really done before, such as writing m
 
 I have no pretensions to ever ship the game - it may not even ever be fun to play (since my goal is far more that it should be fun to program!). It's certainly not playable now. But as a programmer there's lots of interesting little things that have kept me intrigued that have never really come up in my life as a graphics coder before. So I thought I'd write about some of them.</pre>
 </div>
-<div title="Elite Dangerous on the Rift" creator="TomForsyth" modifier="TomForsyth" created="201501040340" modified="201501040707" tags="Blog Elite VR" changecount="10">
-<pre>I've been waiting for this a long time. Elite on the BBC Model B (at school) and the Speccy (my home machine) was the game that made me sit up and realise that 3D rendering was a thing, and it was awesome, and I had to figure it out. I also rapidly discovered that it was a thing that is very difficult, but it inspired me to keep pushing my coding knowledge from BASIC to FORTH to assembly and learning all sorts of tricks. It was only years later on the Atari ST that I felt I actually knew what I was doing and was finally a competent graphics coder, and that moment came when I had a Viper rotating on my screen as fast as the ST version of Elite. It was only much later when I went back and learned some of the details of the 8-bit versions that I realized just how many tricks had had to be played, and why the Amiga/ST versions were comparatively straightforward by comparison.
+<div title="Elite Dangerous on the Rift" creator="TomForsyth" modifier="TomForsyth" created="201501040340" modified="201608151716" tags="Blog Elite VR" changecount="11">
+<pre>''[Edit - this was all good info at the time, but now everything Just Works so most of this post is obsolete. But I don't like to remove stuff from the web, so it remains here for posterity.]''
+
+I've been waiting for this a long time. Elite on the BBC Model B (at school) and the Speccy (my home machine) was the game that made me sit up and realise that 3D rendering was a thing, and it was awesome, and I had to figure it out. I also rapidly discovered that it was a thing that is very difficult, but it inspired me to keep pushing my coding knowledge from BASIC to FORTH to assembly and learning all sorts of tricks. It was only years later on the Atari ST that I felt I actually knew what I was doing and was finally a competent graphics coder, and that moment came when I had a Viper rotating on my screen as fast as the ST version of Elite. It was only much later when I went back and learned some of the details of the 8-bit versions that I realized just how many tricks had had to be played, and why the Amiga/ST versions were comparatively straightforward by comparison.
 
 Later at university I met David Braben a few times, and despite my rampant fanboyism, he helped me get my start into the industry. And I've always been a graphics programmer at heart through my various jobs, and on almost every project I have ever worked on, the very first thing I get running is a rotating Viper - I can type the coordinates and faces in from memory (which isn't actually that difficult, but it's a neat party trick).
 
@@ -4029,8 +4032,82 @@ Note it's only sort-of a Wiki, because although it looks like you can edit it, y
 
 For the technically-minded, this particular breed of Wiki is a TiddlyWiki, and you can read all about it at http://www.tiddlywiki.com/</pre>
 </div>
-<div title="Wrangling enums" creator="TomForsyth" modifier="TomForsyth" created="201406230057" modified="201501040652" tags="Blog Coding" changecount="13">
-<pre>A bunch of discussions came up on Twitter recently, and they were useful and interesting, but Twitter is a terrible place to archive things or get any subtlety, so I've put it here.
+<div title="Why didn't Larrabee fail?" creator="YourName" modifier="TomForsyth" created="201608151113" modified="201608151855" tags="Larrabee" changecount="26">
+<pre>Every month or so, someone will ask me what happened to [[Larrabee]] and why it failed so badly. And I then try to explain to them that not only didn't it fail, it was a pretty huge success. And they are understandably very puzzled by this, because in the public consciousness Larrabee was like the Itanic and the SPU rolled into one, wasn't it? Well, not quite. So rather than explain it in person a whole bunch more times, I thought I should write it down.
+
+This is not a history, and I'm going to skip a TON of details for brevity. One day I'll write the whole story down, because it's a pretty decent escapade with lots of fun characters. But not today. Today you just get the very start and the very end.
+
+When I say &quot;Larrabee&quot; I mean all of Knights, all of MIC, all of Xeon Phi, all of the &quot;Isle&quot; cards - they're all exactly the same chip and the same people and the same software effort. Marketing seemed to dream up a new codeword every week, but there was only ever three chips:
+* Knights Ferry / Aubrey Isle / ~LRB1 - mostly a prototype, had some performance gotchas, but did work, and shipped to partners.
+* Knights Corner / Xeon Phi / ~LRB2 - the thing we actually shipped in bulk.
+* Knights Landing - the new version that is shipping any day now (mid 2016).
+
+That's it. There were some other codenames I've forgotten over the years, but they're all of one of the above chips. Behind all the marketing smoke and mirrors there were only three chips ever made (so far), and only four planned in total (we had a thing called ~LRB3 planned between KNC and KNL for a while). All of them are &quot;Larrabee&quot;, whether they do graphics or not.
+
+When Larrabee was originally conceived back in about 2005, it was called &quot;SMAC&quot;, and its original goals were, from most to least important:
+
+1. Make the most powerful flops-per-watt machine for real-world workloads using a huge array of simple cores, on systems and boards that could be built into bazillo-core supercomputers.
+
+2. Make it from x86 cores. That means memory coherency, store ordering, memory protection, real ~OSes, no ugly scratchpads, it runs legacy code, and so on. No funky ~DSPs or windowed register files or wacky programming models allowed. Do not build another Itanium or SPU!
+
+3. Make it soon. That means keeping it simple.
+
+4. Support the emerging GPGPU market with that same chip. Intel were absolutely not going to build a 150W ~PCIe card version of their embedded graphics chip (known as &quot;Gen&quot;), so we had to cover those programming models. As a bonus, run normal graphics well.
+
+5. Add as little graphics-specific hardware as you can get away with.
+
+That ordering is important - in terms of engineering and focus, Larrabee was never primarily a graphics card. If Intel had wanted a kick-ass graphics card, they already had a very good graphics team ''begging'' to be allowed to build a nice big fat hot discrete GPU - and the Gen architecture is such that they'd build a great one, too. But Intel management didn't want one, and still doesn't. But if we were going to build Larrabee anyway, they wanted us to cover that market as well.
+
+Now remember this was around 2005 - just as GPGPU was starting to show that it could get interesting wins on real HPC workloads. But it was before the plethora of &quot;kernel&quot; style coding languages had spread to &quot;normal&quot; languages like C and FORTRAN (yes, big computing people still use FORTRAN, get over it). Intel was worried its existing Xeon CPU line just weren't cutting it against the emerging threat from things like GPGPU, the Sony CELL/SPU, Sun's Niagara, and other radical massively-parallel architectures. They needed something that was ~CPU-like to program, but ~GPU-like in number crunching power.
+
+Over the years the external message got polluted and confused - sometimes intentionally - and I admit I played my own part in that. An awful lot of &quot;highly speculative marketing projections&quot; (i.e. bullshit) was issued as firm proclamations, and people talked about things that were 20 years off as if they were already in the chip/SW. It didn't help that marketing wanted to keep Larrabee (the graphics side) and MIC/Knights/Xeon Phi (the HPC side) separate in the public consciousness, even though they were the exact same chip on very nearly the exact same board. As I recall the only physical difference was that one of them didn't have a DVI connector soldered onto it!
+
+Behind all that marketing, the design of Larrabee was of a CPU with a very wide SIMD unit, designed above all to be a real grown-up CPU - coherent caches, well-ordered memory rules, good memory protection, true multitasking, real threads, runs Linux/~FreeBSD, etc. Larrabee, in the form of KNC, went on to become the fastest supercomputer in the world for a couple of years, and it's still making a ton of money for Intel in the HPC market that it was designed for, fighting very nicely against the ~GPUs and other custom architectures. Its successor, KNL, is just being released right now (mid 2016) and should do very nicely in that space too. Remember - KNC is literally the same chip as ~LRB2. It has texture samplers and a video out port sitting on the die. They don't test them or turn them on or expose them to software, but they're still there - it's still a graphics-capable part.
+
+So how did we do on those original goals? Did we fail? Let's review:
+
+** 1. Make the most powerful flops-per-watt machine.
+
+''SUCCESS!'' Fastest supercomputer in the world, and powers a whole bunch of the others in the top 10. Big win, covered a very vulnerable market for Intel, made a lot of money and good press.
+
+** 2. Make it from x86 cores.
+
+''SUCCESS!'' The only compromise to full x86 compatibility was KNF/KNC didn't have SSE because it would have been too much work to build &amp; validate those units (remember we started with the original Pentium chip). KNL adds SSE legacy instructions back in, and so really truly is a proper x86 core. In fact it's so x86 that x86 grew to include it - the new ~AVX512 instruction set is Larrabee's instruction set with some encoding changes and a few tweaks.
+
+** 3. Make it soon. That means keeping it simple.
+
+''NOT BAD.'' It's not quite as simple as slapping a bunch of Pentiums on a chip of course, but it wasn't infeasibly complex either. We did slip a year for various reasons, and then KNF's performance was badly hurt by a bunch of bugs, but these things happen. KNC was almost on time and turned out great.
+
+** 4. Support the emerging GPGPU market. As a bonus, run normal graphics well.
+
+PRIMARY GOAL: ''VIRTUAL SUCCESS!'' It would have been a real success if it had ever shipped. Larrabee ran Compute Shaders and ~OpenCL very well - in many cases better (in flops/watt) than rival ~GPUs, and because it ran the other graphical bits of ~DirectX and ~OpenGL pretty well, if you were using graphics ~APIs mainly for compute, it was a compelling package. Unfortunately when the &quot;we don't do graphics anymore&quot; orders came down from on high, all that got thrown in the trash with the rest. It did also kickstart the development of a host of ~GPGPU-like programming models such as ISPC and CILK Plus, and those survive and are doing well.
+
+BONUS GOAL: ''close, but no cigar.'' I'll talk about this more below.
+
+** 5. Add as little graphics-specific hardware as you can get away with.
+
+''MODERATE SUCCESS:'' The only dedicated graphics hardware was the texture units (and we took them almost totally from Gen, so we didn't have to reinvent that wheel). Eyeballing die photos, they took up about 10% of the area, which certainly isn't small, but isn't crazy-huge either. When they're not being used they power down, so they're not a power drain unless you're using them, in which case of course they're massively better than doing texture sampling with a core. They were such a small part that nobody bothered to make a new version of KNC without them - they still sit there today, visible on the die photograph as 8 things that look like cores but are slightly thinner. Truth be told, if KNC had been a properly graphics-focused part we would have had 16 of the things, but it wasn't so we had to make do with 8.
+
+
+In total I make that three wins, one acceptable, and a loss. By that score Larrabee hardly &quot;failed&quot;. We made Intel a bunch of money, we're very much one of the top dogs in the HPC and supercomputer market, and the &quot;big cores&quot; have adopted our instruction set.
+
+
+So let's talk about the elephant in the room - graphics. Yes, at that we did fail. And we failed mainly for reasons of time and politics. And even then we didn't fail by nearly as much as people think. Because we were never allowed to ship it, people just saw a giant crater, but in fact Larrabee did run graphics, and it ran it surprisingly well. Larrabee emulated a fully ~DirectX11 and ~OpenGL4.x compliant graphics card - by which I mean it was a ~PCIe card, you plugged it into your machine, you plugged the monitor into the back, you installed the standard Windows driver, and... it was a graphics card. There was no other graphics cards in the system. It had the full ~DX11 feature set, and there were over 300 titles running perfectly - you download the game from Steam and they Just Work - they totally think it's a graphics card! But it's still actually running ~FreeBSD on that card, and under ~FreeBSD it's just running an x86 program called ~DirectXGfx (248 threads of it). And it shares a file system with the host and you can telnet into it and give it other work to do and steal cores from your own graphics system - it was mind-bending! And because it was software, it could evolve - Larrabee was the first fully ~DirectX11-compatible card Intel had, because unlike Gen we didn't have to make a new chip when Microsoft released a new spec. It was also the fastest graphics card Intel had - possibly still is. Of course that's a totally unfair comparison because Gen (the integrated Intel gfx processor) has far less power and area budget. But that should still tell you that Larrabee ran graphics at perfectly respectable speeds. I got very good at ~Dirt3 on Larrabee.
+
+Of course, this was just the very first properly working chip (KNF had all sorts of problems, so KNC was the first shippable one) and the software was very young. No, it wasn't competitive with the fastest ~GPUs on the market at the time, unless you chose the workload very carefully (it was excellent at running Compute Shaders). If we'd had more time to tune the software, it would have got a lot closer. And the next rev of the chip would have closed the gap further. It would have been a very strong chip in the high-end visualization world, where tiny triangles, super-short lines and massive data sets are the main workloads - all things Larrabee was great at. But we never got the time or the political will to get there, and so the graphics side was very publicly cancelled. And then a year later it was very publicly cancelled again because they hadn't actually done it the first time - people kept working on it. And then a third time in secret a bit later, because they didn't want anybody to know people were ''still'' working on graphics on LRB.
+
+So - am I sad Larrabee as a graphics device failed? Well, yes and no.
+
+I have always been a graphics programmer. The whole &quot;CPU architect&quot; thing was a total accident along the way. As such, I am sad that we didn't get to show what KNC could do as a really amazing emulation of a GPU. But I am still hugely proud of what the team managed to do with KNC given the brief of first and foremost being a real highly-coherent legacy-compatible CPU running a grown-up OS.
+
+Do I think we could have done more graphics with KNC? In terms of hardware, honestly not really. There's nothing I sit here and think &quot;if only we'd done X, it all would have been saved&quot;. KNC was a hell of a chip - still is - I don't see how we could have squeezed much more out of the time time and effort budgets we had - we already had some features that were kicked in the arse until they squeezed in under the wire (thanks George!). Having 16 texture samplers instead of just 8 would have helped, but probably not enough to prevent us getting cancelled. We could certainly have done with another year of tuning the software. We could have also done with a single longer-term software effort, rather than 4-5 different short-term ones that the random whims of upper management forced upon us (that's a whole long story all by itself). I could also wish for a graphics-capable version of KNL (i.e. add the texture units back in), but honestly just imagine what people could have done in the five years since KNC shipped if they had allowed normal people to access the existing texture units, and write their own graphics pipelines - it would have been amazing! So my biggest regret is that we were forbidden from exposing the goodness that already existed - that's the thing that really annoys me about the whole process.
+
+Even then, it's hard for me to be too morose when so many of my concepts, instructions and architecture features are now part of the broader x86 ecosystem in the form of ~AVX512. I'm not sure any other single person has added so many instructions to the most popular instruction set in the world. It's a perfectly adequate legacy for an old poly-pusher! And now I'm doing that VR thing instead. Maybe it all worked out for the best.</pre>
+</div>
+<div title="Wrangling enums" creator="TomForsyth" modifier="TomForsyth" created="201406230057" modified="201608151723" tags="Blog Coding" changecount="14">
+<pre>''[edit: this post doesn't mention the C++11 [[enum class |http://www.cprogramming.com/c++11/c++11-nullptr-strongly-typed-enum-class.html]] construct simply because I wasn't aware of it at the time. It seems most programmers still don't know about it. It doesn't solve all the problems discussed here, but it helps with some.]''
+
+A bunch of discussions came up on Twitter recently, and they were useful and interesting, but Twitter is a terrible place to archive things or get any subtlety, so I've put it here.
 
 So there's something concrete to talk about, here's a starting example of an enum. Some people prefer to use {{{ALL_CAPS}}} for their enums because in C they were basically just #defines. But we can drop that practice now - they're not quite so mad in C++.
 

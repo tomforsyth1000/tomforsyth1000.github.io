@@ -5,11 +5,33 @@
 <link>http://eelpi.gotdns.org/blog.wiki.html</link>
 <description>It's only pretending to be a wiki.</description>
 <language>en</language>
-<copyright>Copyright 2015 TomForsyth</copyright>
-<pubDate>Thu, 10 Sep 2015 15:35:13 GMT</pubDate>
-<lastBuildDate>Thu, 10 Sep 2015 15:35:13 GMT</lastBuildDate>
+<copyright>Copyright 2016 TomForsyth</copyright>
+<pubDate>Mon, 15 Aug 2016 18:55:43 GMT</pubDate>
+<lastBuildDate>Mon, 15 Aug 2016 18:55:43 GMT</lastBuildDate>
 <docs>http://blogs.law.harvard.edu/tech/rss</docs>
 <generator>TiddlyWiki 2.7.2</generator>
+
+<item>
+<title>Why didn't Larrabee fail?</title>
+<description>Every month or so, someone will ask me what happened to Larrabee and why it failed. And I then try to explain to them that it didn't fail, it was really a pretty big success. So rather than explain it in person a whole bunch more times, I thought I should write it down.
+</description>
+<category>Larrabee</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BWhy%20didn't%20Larrabee%20fail%3F%5D%5D</link>
+<pubDate>Mon, 15 Aug 2016 18:55:42 GMT</pubDate>
+</item>
+
+<item>
+<title>The sRGB learning curve</title>
+<description>Many people use sRGB without quite getting it right, and this can cause subtle and not-to-subtle problems. This post goes into many of the nuances of using sRGB. It also talks about how sRGB should be used with the Oculus Rift SDK, where there are even more subtleties to be had.</description>
+<category>Blog</category>
+<category>Coding</category>
+<category>Rendering</category>
+<category>VideoCards</category>
+<category>Alphablending</category>
+<category>Oculus</category>
+<link>http://eelpi.gotdns.org/blog.wiki.html#%5B%5BThe%20sRGB%20learning%20curve%5D%5D</link>
+<pubDate>Tue, 01 Dec 2015 00:21:00 GMT</pubDate>
+</item>
 
 <item>
 <title>NaNs cause the craziest bugs</title>
