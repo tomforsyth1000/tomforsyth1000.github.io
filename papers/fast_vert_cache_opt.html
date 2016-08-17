@@ -2,7 +2,6 @@
 
 <head>
 
-<meta charset="iso-8859-1"/>
 <title>Linear-Speed Vertex Cache Optimisation</title>
 <style>
 <!--
@@ -93,7 +92,7 @@ screen space and lit in various ways) before rendering. Indexed rendering hardwa
 typically uses a small cache of vertices to avoid re-processing vertices that
 are shared between recently-rendered triangles. Using a moderately-sized cache
 (anywhere between 12 and 24 vertices is common) reduces the load on the vertex
-processing pipeline far more than the older non-indexed strips and fans model –
+processing pipeline far more than the older non-indexed strips and fans model â€“
 often halving the amount of work required per triangle.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -127,7 +126,7 @@ to be re-run for that new configuration.</p>
 shipping the same art for many different consoles, the exact size and type of
 the vertex cache is not known at authoring time, and frequently not even known
 at runtime, as the exact structures are often proprietary information. For this
-reason, [Bogomjakov] discusses a “universal rendering sequence”, a single
+reason, [Bogomjakov] discusses a â€œuniversal rendering sequenceâ€, a single
 sequence that is favourable to a wide range of cache sizes and types, and has
 no particular pathological weaknesses on any particular one of them.</p>
 
@@ -135,7 +134,7 @@ no particular pathological weaknesses on any particular one of them.</p>
 
 <p class=MsoNormal>The usual way to refer to the efficiency of a vertex cache
 is to divide the number of vertex-cache misses by the number of triangles in
-the mesh. This gives the average cache miss ratio (ACMR) – the average number
+the mesh. This gives the average cache miss ratio (ACMR) â€“ the average number
 of vertices that need to be processed per triangle.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -143,7 +142,7 @@ of vertices that need to be processed per triangle.</p>
 <h2>Outline</h2>
 
 <p class=MsoNormal>The algorithm presented here is based on a cache of vertices
-using a least recently used (LRU) replacement policy. Various “scores” are
+using a least recently used (LRU) replacement policy. Various â€œscoresâ€ are
 assigned to each vertex depending on its position within the LRU cache (i.e.
 how recently-used it is). Triangles are also assigned a score, which is the sum
 of the scores of the vertices it uses. When considering which triangle in the mesh
@@ -156,23 +155,23 @@ never backtracks or looks ahead at its choices of triangle.</p>
 
 <p class=MsoNormal>Although most hardware uses FIFO-replacement caches for
 simplicity and speed, here we use an LRU-replacement cache. This cache is
-referred to as the “modelled cache”, as opposed to the real “hardware cache”
+referred to as the â€œmodelled cacheâ€, as opposed to the real â€œhardware cacheâ€
 that an actual graphics card has. The reason the modelled cache is LRU rather
 than FIFO is that the single sequence of triangles this algorithm generates is
 intended to be usable on a wide range of (usually unknown) hardware cache sizes
 and replacement policies, and modelling with a FIFO cache of the incorrect size
-causes either pathological “thrashing” of the real hardware cache, or
+causes either pathological â€œthrashingâ€ of the real hardware cache, or
 under-utilisation. In practice, an LRU modelled cache produces a more
 consistent sequence, even if it does not match common hardware.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The modelled cache size chosen merely needs to be “big
-enough” to include all likely hardware caches. [Hoppe] shows that it is
+<p class=MsoNormal>The modelled cache size chosen merely needs to be â€œbig
+enoughâ€ to include all likely hardware caches. [Hoppe] shows that it is
 unlikely that any hardware will see any significant benefit from a cache larger
 than 32 entries, and so 32 was chosen as the modelled cache size here.
 Experiments were also performed with a 64-entry modelled cache, but no
-significant difference in eventual cache performance was found – the algorithm
+significant difference in eventual cache performance was found â€“ the algorithm
 simply ran slower.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -191,7 +190,7 @@ fast, accurate previews of their models.</p>
 
 <p class=MsoNormal>It is also helpful for games that have dynamically generated
 content, such as joining together parts of bodies and faces to make composite
-characters – the resulting mesh should be optimised as a whole for the hardware
+characters â€“ the resulting mesh should be optimised as a whole for the hardware
 vertex cache for maximum efficiency, but this cannot be performed until all the
 parts have been joined into a single mesh. In games such as RPGs or MMOs with a
 massive number of potential body-shapes, each specified dynamically, new meshes
@@ -209,13 +208,13 @@ likely, low scores make it less. The score depends on a number of things.</p>
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>The first is that the more recently the vertex was used, the
-higher its score. The score is calculated by taking the vertex’s position in
+higher its score. The score is calculated by taking the vertexâ€™s position in
 the LRU cache as a fractional number between zero and one, with zero at the
 last (LRU) position and one in the first (MRU) position. This scaled position
 is then raised to a power greater than one. The value of the power was chosen
 by repeated simulation, and the value 1.5 seems to give good results. Using a
 power rather than a simple linear score seems to give a behaviour that is more
-scale-independent – a desired trait in an algorithm attempting to optimise for
+scale-independent â€“ a desired trait in an algorithm attempting to optimise for
 an unknown size of hardware cache.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -227,7 +226,7 @@ those three vertices were used depends entirely upon the order they were
 specified in the most recent triangle, and that is subject to the whims of
 export pipelines and various other unpredictable factors. Note that the scores
 for the rest of the vertices in the cache is performed as if these first three
-were not there, i.e. the fourth vertex in the cache gets a “top” score of 1.0.
+were not there, i.e. the fourth vertex in the cache gets a â€œtopâ€ score of 1.0.
 The surprising twist is that the score the first three are fixed at was also
 found by experimentation to be best set to 0.75. This is lower than the score
 of the vertex after them in the cache!</p>
@@ -241,11 +240,11 @@ triangle. On the face of it, this sounds like exactly what we want. The problem
 is that because this algorithm has no look-ahead capability, it will first form
 a long thin strip through the mesh, and then the strip will turn back on itself
 for a long way, and then again. Although this sounds fairly good, it is only
-getting an ACMR of around 1.0 – one vertex per triangle – far worse than a good
+getting an ACMR of around 1.0 â€“ one vertex per triangle â€“ far worse than a good
 algorithm is capable of. By slightly discouraging immediate reuse of an edge,
 the algorithm is forced to look a little further away, and this seems to produce
 a more generally acceptable pattern that is not unlike the theorised ideal
-shape – a Hilbert curve. Here is a table showing how position in the first half
+shape â€“ a Hilbert curve. Here is a table showing how position in the first half
 of the 32-entry LRU cache corresponds to score:</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -640,7 +639,7 @@ it, the algorithm will still pick out the best path through a mesh, maintaining
 a low vertex/triangle ratio. The problem is that it will leave some lone or
 small clusters of triangles behind as it does so, because adding them is
 slightly less optimal than adding other triangles. By the time the mesh is 90%
-done, all that remains are these little bits of “detritus” – isolated fragments
+done, all that remains are these little bits of â€œdetritusâ€ â€“ isolated fragments
 that still need to be drawn. Although at this point the ACMR is still pleasingly
 low, adding these remaining fragments is very costly, because they are not
 close to each other, and so each incur costs of around 3 vertices per triangle.
@@ -653,17 +652,17 @@ the detritus at a sensible time.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>Additionally, if the algorithm runs into a “dead end” part
+<p class=MsoNormal>Additionally, if the algorithm runs into a â€œdead endâ€ part
 of the mesh, where there are no more nearby triangles to add (for example, at
 the end of a finger of a hand), it encourages the algorithm to start again at
-triangle that is near another “dead end”, such as the edge of a mesh, rather
+triangle that is near another â€œdead endâ€, such as the edge of a mesh, rather
 than start right in the middle of a patch and create an artificial dead end.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The two scores – that due to the FIFO position and the one
-due to remaining valence – are added together to find the total vertex score.
-To find each triangle’s score, the score for each of the three vertices is
+<p class=MsoNormal>The two scores â€“ that due to the FIFO position and the one
+due to remaining valence â€“ are added together to find the total vertex score.
+To find each triangleâ€™s score, the score for each of the three vertices is
 added together. And at each stage, the triangle with the highest score is added
 to the draw list, and the scores for the vertices are recalculated.</p>
 
@@ -672,7 +671,7 @@ to the draw list, and the scores for the vertices are recalculated.</p>
 <p class=MsoNormal>The full code for calculating the score of a vertex is as
 follows:</p>
 
-<p class=MsoNormal> </p>
+<p class=MsoNormal>Â </p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New";color:blue'>const</span><span style='font-size:10.0pt;
@@ -702,148 +701,148 @@ font-family:"Courier New"'> FindVertexScore ( vcache_vertex_data *VertexData )</
 font-family:"Courier New"'>{</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:blue'>if</span> (
+font-family:"Courier New"'>Â Â Â  <span style='color:blue'>if</span> (
 VertexData-&gt;NumActiveTris == 0 )</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    {</span></p>
+font-family:"Courier New"'>Â Â Â  {</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        <span style='color:green'>// No tri needs
+font-family:"Courier New"'>Â Â Â Â Â Â Â  <span style='color:green'>// No tri needs
 this vertex!</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        <span style='color:blue'>return</span>
+font-family:"Courier New"'>Â Â Â Â Â Â Â  <span style='color:blue'>return</span>
 -1.0f;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    }</span></p>
+font-family:"Courier New"'>Â Â Â  }</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:blue'>float</span> Score =
+font-family:"Courier New"'>Â Â Â  <span style='color:blue'>float</span> Score =
 0.0f;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:blue'>int</span>
+font-family:"Courier New"'>Â Â Â  <span style='color:blue'>int</span>
 CachePosition = VertexData-&gt;CacheTag;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:blue'>if</span> (
+font-family:"Courier New"'>Â Â Â  <span style='color:blue'>if</span> (
 CachePosition &lt; 0 )</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    {</span></p>
+font-family:"Courier New"'>Â Â Â  {</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        <span style='color:green'>// Vertex is not
+font-family:"Courier New"'>Â Â Â Â Â Â Â  <span style='color:green'>// Vertex is not
 in FIFO cache - no score.</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    }</span></p>
+font-family:"Courier New"'>Â Â Â  }</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:blue'>else</span></span></p>
+font-family:"Courier New"'>Â Â Â  <span style='color:blue'>else</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    {</span></p>
+font-family:"Courier New"'>Â Â Â  {</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        <span style='color:blue'>if</span> (
+font-family:"Courier New"'>Â Â Â Â Â Â Â  <span style='color:blue'>if</span> (
 CachePosition &lt; 3 )</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        {</span></p>
+font-family:"Courier New"'>Â Â Â Â Â Â Â  {</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:green'>// This vertex
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  <span style='color:green'>// This vertex
 was used in the last triangle,</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:green'>// so it has a
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  <span style='color:green'>// so it has a
 fixed score, whichever of the three</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:green'>// it's in.
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  <span style='color:green'>// it's in.
 Otherwise, you can get very different</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:green'>// answers
+font-family:"Courier New"'>Â Â  Â Â Â Â Â Â Â Â Â <span style='color:green'>// answers
 depending on whether you add</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:green'>// the
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  <span style='color:green'>// the
 triangle 1,2,3 or 3,1,2 - which is silly.</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            Score = FindVertexScore_LastTriScore;</span></p>
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  Score = FindVertexScore_LastTriScore;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        }</span></p>
+font-family:"Courier New"'>Â Â Â Â Â Â Â  }</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        <span style='color:blue'>else</span></span></p>
+font-family:"Courier New"'>Â Â Â Â Â Â Â  <span style='color:blue'>else</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        {</span></p>
+font-family:"Courier New"'>Â Â Â Â Â Â Â  {</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            assert ( CachePosition &lt;
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  assert ( CachePosition &lt;
 MaxSizeVertexCache );</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:green'>// Points for
+font-family:"Courier New"'>Â Â Â  Â Â Â Â Â Â Â Â <span style='color:green'>// Points for
 being high in the cache.</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            <span style='color:blue'>const</span> <span
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  <span style='color:blue'>const</span> <span
 style='color:blue'>float</span> Scaler = 1.0f / ( MaxSizeVertexCache - 3 );</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            Score = 1.0f - ( CachePosition - 3 ) *
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  Score = 1.0f - ( CachePosition - 3 ) *
 Scaler;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>            Score = powf ( Score,
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â  Score = powf ( Score,
 FindVertexScore_CacheDecayPower );</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>        }</span></p>
+font-family:"Courier New"'>Â Â Â Â Â Â Â  }</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    }</span></p>
+font-family:"Courier New"'>Â Â  Â }</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:green'>// Bonus points for
+font-family:"Courier New"'>Â Â Â  <span style='color:green'>// Bonus points for
 having a low number of tris still to </span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:green'>// use the vert, so we
+font-family:"Courier New"'>Â Â Â  <span style='color:green'>// use the vert, so we
 get rid of lone verts quickly.</span></span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New";color:blue'>    float</span><span style='font-size:
+font-family:"Courier New";color:blue'>Â Â Â  float</span><span style='font-size:
 10.0pt;font-family:"Courier New"'> ValenceBoost = powf (
 VertexData-&gt;NumActiveTris,</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>                               
+font-family:"Courier New"'>Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â 
 -FindVertexScore_ValenceBoostPower );</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    Score += FindVertexScore_ValenceBoostScale *
+font-family:"Courier New"'>Â Â  Â Score += FindVertexScore_ValenceBoostScale *
 ValenceBoost;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
-font-family:"Courier New"'>    <span style='color:blue'>return</span> Score;</span></p>
+font-family:"Courier New"'>Â Â Â  <span style='color:blue'>return</span> Score;</span></p>
 
 <p class=MsoNormal style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New"'>}</span></p>
@@ -862,17 +861,17 @@ functions for the scores is not the appropriate function, and that using other
 functions, or possibly fully custom look-up-tables, may yield better results.
 However, the results are fairly close to what is considered optimal, and it is
 likely that any remaining improvements are small. In summary, these values
-appear to be “good enough” for most purposes.</p>
+appear to be â€œgood enoughâ€ for most purposes.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>As a side note, it is curious that the four constants are
-all so close to “normal” numbers. The values 1.5, 0.75, 2.0 and 0.5 seem almost
+all so close to â€œnormalâ€ numbers. The values 1.5, 0.75, 2.0 and 0.5 seem almost
 boring. And yet the process of annealing did consider possible values for all
 of them that varied in 0.05 increments, out to a range of at least +/- 0.5 from
 their current settings. Nor were these the values selected using human
 judgement at the start of the annealing process (for example, the valence boost
-scale began far smaller than 2.0 – it is somewhat surprising it turned out to
+scale began far smaller than 2.0 â€“ it is somewhat surprising it turned out to
 be so important). Nevertheless, these values consistently produced the best
 overall scores across the range of caches and meshes.</p>
 
@@ -884,7 +883,7 @@ overall scores across the range of caches and meshes.</p>
 algorithm above. However, there are many ways to implement this algorithm that
 run slowly, and one of the key features of this algorithm is speed.</p>
 
-<p class=MsoNormal> </p>
+<p class=MsoNormal>Â </p>
 
 <p class=MsoNormal>Unlike many conventional mesh topology algorithms, no edge
 data is kept, nor is any needed. This avoids the expense of finding edge data
@@ -917,7 +916,7 @@ indices that have already been added to the draw list.</p>
 
 <ul style='margin-top:0cm' type=disc>
  <li class=MsoNormal>Whether it has been added to the draw list or not</li>
- <li class=MsoNormal>The triangle’s score (the sum of the scores of its
+ <li class=MsoNormal>The triangleâ€™s score (the sum of the scores of its
      vertices)</li>
  <li class=MsoNormal>The indices to the three vertices</li>
 </ul>
@@ -995,7 +994,7 @@ to add.</p>
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>Examining the above carefully, we can see that with a
-“normal” mesh where each vertex is used by around 6 triangles, the runtime
+â€œnormalâ€ mesh where each vertex is used by around 6 triangles, the runtime
 speed and memory use of this algorithm is linearly proportional to the number
 of vertices in the mesh. This is considerably better than various look-ahead or
 hierarchical subdivision methods, or those that use complex topological
@@ -1011,7 +1010,7 @@ representative of typical interactive (i.e. games) meshes, and one is a more
 idealised mesh used for sanity-checking the algorithm. The results for the
 idealised mesh are still relevant for highly regular surfaces such as terrain
 height-fields or finely-tessellated models, but the results from it did not
-guide the direction of the algorithm significantly – far more importance was
+guide the direction of the algorithm significantly â€“ far more importance was
 given to the more realistic meshes.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -1044,7 +1043,7 @@ cache of 32 entries. 64 entries was also tried, but it appeared to make little
 difference to the output, it simply made the algorithm run slower. The single output
 was then fed to an idealised FIFO cache of various sizes, and the ACMR is shown
 in the table below. The 1024-entry FIFO cache is intended as an upper limit of
-the “perfect cache”, and indeed for a mesh with chunks fewer than 1024
+the â€œperfect cacheâ€, and indeed for a mesh with chunks fewer than 1024
 vertices, it does indeed represent that perfect value, whatever the rendering
 order. Real hardware typically has between 12 and 24 entries, with 32 regarded
 by many as the upper limit of a useful cache before the extra entries give
@@ -1322,7 +1321,7 @@ the algorithms custom-designed for efficient stripping of non-indexed meshes.</p
 
 <p class=MsoNormal>Note that the ACMR consistently decreases as more entries
 are added to the cache. It is important to remember that the same rendering
-sequence was used for all the cache efficiency measurements – the algorithm was
+sequence was used for all the cache efficiency measurements â€“ the algorithm was
 not re-run for each cache, and indeed has no idea what size of hardware cache
 it will be running on. As can be seen, the ACMRs consistently and smoothly
 decrease, with no preference shown to any particular cache size, and no
@@ -1385,7 +1384,7 @@ and uninteresting for most practical purposes.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>So this problem is pretty close to being “solved”. In fact 
+<p class=MsoNormal>So this problem is pretty close to being â€œsolvedâ€. In fact 
 I think it was solved for known hardware by [Hoppe], and for
 unknown hardware by [Bogomjakov], with the one weakness of the latter being the
 complexity of implementation and the runtime and memory costs of the algorithm.
@@ -1399,7 +1398,7 @@ optimised on the fly.</p>
 This is a more generalised caching algorithm, but when applied to the problem of ACMR
 and tweaked a bit by <a href="http://www.dirtybitsoftware.com/">Jason Hughes</a>,
 the implementation seems to boil down to pretty much the same algorithm as outlined 
-here. Which is reassuring in a “convergent evolution” sort of way.</p>
+here. Which is reassuring in a â€œconvergent evolutionâ€ sort of way.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
@@ -1463,21 +1462,21 @@ always useful.</p>
 
 <h2>References</h2>
 
-<p class=MsoNormal>[Hoppe] “Optimization of mesh locality for transparent
-vertex caching.” Hugues Hoppe, ACM SIGGRAPH 1999, 269-276, <a
+<p class=MsoNormal>[Hoppe] â€œOptimization of mesh locality for transparent
+vertex caching.â€ Hugues Hoppe, ACM SIGGRAPH 1999, 269-276, <a
 href="http://research.microsoft.com/~hoppe/">http://research.microsoft.com/~hoppe/</a></p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>[Bogomjakov] “Universal rendering sequences for transparent
-vertex caching of progressive meshes” Alexander Bogomjakov, Craig Gotsman, Computer
+<p class=MsoNormal>[Bogomjakov] â€œUniversal rendering sequences for transparent
+vertex caching of progressive meshesâ€ Alexander Bogomjakov, Craig Gotsman, Computer
 Graphics Forum 21(2):137-148, 2002, <a
 href="http://www.cs.technion.ac.il/~gotsman/publications.html">http://www.cs.technion.ac.il/~gotsman/publications.html</a>
 </p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>[Lin] “An Improved Vertex Caching Scheme for 3D Mesh Rendering”
+<p class=MsoNormal>[Lin] â€œAn Improved Vertex Caching Scheme for 3D Mesh Renderingâ€
 Gang Lin, Thomas P.-Y. Yu, IEEE Transactions on Visualization and Computer Graphics
 Volume 12, Issue 4 (July 2006) <a href="http://www.ecse.rpi.edu/~lin/K-Cache-Reorder/">http://www.ecse.rpi.edu/~lin/K-Cache-Reorder/</a>
 </p>
@@ -1492,7 +1491,7 @@ Apologies for not posting my own implementation, but it's part of
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>
-Martin Storsjö has source of a very clean implementation of this algorithm as part of his Master's thesis <a href="http://www.martin.st/thesis/">Efficient Triangle Reordering for Improved Vertex Cache Utilisation in Realtime Rendering</a>, which is well worth a read. Thanks Martin!
+Martin StorsjÃ¶ has source of a very clean implementation of this algorithm as part of his Master's thesis <a href="http://www.martin.st/thesis/">Efficient Triangle Reordering for Improved Vertex Cache Utilisation in Realtime Rendering</a>, which is well worth a read. Thanks Martin!
 </p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -1510,7 +1509,7 @@ Another good implementation in the source for Farbrausch's <a href="https://gith
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>
-Elegant standalone version by Adrian Stone. Bonus points for the "namespace Forsyth": <a href="https://github.com/bkaradzic/bgfx/tree/master/3rdparty/forsyth-too">https://github.com/bkaradzic/bgfx/tree/master/3rdparty/forsyth-too</a>. Thanks to Branimir Karadžic.
+Elegant standalone version by Adrian Stone. Bonus points for the "namespace Forsyth": <a href="https://github.com/bkaradzic/bgfx/tree/master/3rdparty/forsyth-too">https://github.com/bkaradzic/bgfx/tree/master/3rdparty/forsyth-too</a>. Thanks to Branimir KaradÅ¾ic.
 </p>
 
 <p class=MsoNormal>&nbsp;</p>
