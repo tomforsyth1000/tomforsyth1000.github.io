@@ -67,8 +67,8 @@ sight.</li>
 </ul>
 
 <p>Some of these features are in some games, but only in
-heavily scripted and constrained ways – frequently they play little part in
-actual gameplay, and so can look rather artificial – which of course is exactly
+heavily scripted and constrained ways â€“ frequently they play little part in
+actual gameplay, and so can look rather artificial â€“ which of course is exactly
 what they are. Using Cellular Automata (CA) to simulate these ideas can lead to
 far more dynamic and realistic behaviour, and allow new types of gameplay and
 new tactics within games. At the very least, they allow more realism, better
@@ -94,9 +94,9 @@ amount of water, which direction the water and/or air is flowing in, and so on.<
 itself with its neighbouring cells. Differences between them result in changes
 to the state of the cell and/or its neighbours according to various laws. In
 this article, these will be based very loosely on real physical laws. One of
-the best-known CAs is “Conway’s Game of Life” [Conway ref]. This is an
-extremely simple CA – it has a single bit of state – whether the cell is full
-or not – and some extremely simple rules for changing state according to the
+the best-known CAs is â€œConwayâ€™s Game of Lifeâ€ [Conway ref]. This is an
+extremely simple CA â€“ it has a single bit of state â€“ whether the cell is full
+or not â€“ and some extremely simple rules for changing state according to the
 state of neighbouring cells. Nevertheless, even this incredibly simple model is
 Turing-Machine-compatible [Conway Turing ref].</p>
 
@@ -108,7 +108,7 @@ form convection currents, and strongly heated air will burn objects and in turn
 be heated by the burning objects.</p>
 
 <p>In a 3D array of cubic cells, there are three possible
-definitions of “neighbour” cells:</p>
+definitions of â€œneighbourâ€ cells:</p>
 
 <ul>
 <li>The 6 cells that share a face with the central cell.</li>
@@ -126,7 +126,7 @@ consider the 6 cells that share a face with the central cell to be neighbours.</
 For human-sized games, we decided to use cubes that are half a metre across.
 Any bigger, and a CA cell of air will not fit inside a narrow passageway.
 Smaller cubes give higher resolution and allow smaller pipes, narrower gaps,
-and so on – but the extra space and processing is expensive. Different scales
+and so on â€“ but the extra space and processing is expensive. Different scales
 of games will naturally require a different size of CA cell, but because most
 games are set at human scales, for convenience this article will assume a scale
 of half-metre cube cells in its examples.</p>
@@ -137,64 +137,64 @@ centimetres thick. They will stop water flow, and slow fire down, and stop
 smoke &amp; air spreading, so they must be modelled in some way. Modelling them
 conventionally by using many small cells, and marking those occupied by the
 wall as solid, would require using cells of no more than about ten centimetres
-across, which requires 125 times as many cells – an extremely expensive option.</p>
+across, which requires 125 times as many cells â€“ an extremely expensive option.</p>
 
 <p>Two possible solutions present themselves. One method, used
 by the first in the X-Com series of games in their impressive and innovative
 use of CAs [X-Com ref], is to model the faces between the cells as entities, as
 well as the cells themselves. So walls, floors and ceilings always lie between
 two cells, along cell faces. This works quite well, but it does mean that there
-are now two distinct classes of object – things that fill a whole cube (rock,
+are now two distinct classes of object â€“ things that fill a whole cube (rock,
 dirt, furniture, tall grass); and things that sit between two cells (walls,
 floorboards, short grass, doors). This creates annoying special cases in the
 code used to model substances and their interactions, and causes code
 replication between the two types, and debugging spaghetti. However, if this
-model fits, then it is a viable one, and it is fairly intuitive – the internal
+model fits, then it is a viable one, and it is fairly intuitive â€“ the internal
 representation of objects matches their rendered shape fairly closely.</p>
 
 <p>The other solution is one that retains its generality
 without resorting to many tiny cells. This is far more flexible about where the
-visual “edges” of the cells are in the world. Rather than the concept of a
+visual â€œedgesâ€ of the cells are in the world. Rather than the concept of a
 fixed solid cubic cell, the edges between cells can move about a bit according
 to the contents. This allows a thin wall to be chopped into half-metre squares,
 and each square lives in a cell. Because the walls are only a few centimetres
 thick, neighbouring cells are thought of as expanding to make up the extra
-space. This “expansion” is simply a way of thinking about it – the CA code
+space. This â€œexpansionâ€ is simply a way of thinking about it â€“ the CA code
 itself does not know or care what shape the objects it represents are. As far
 as the CA physics are concerned, everything is still half a metre thick. Most
 of the work in making things look otherwise is in the rendering, rather than in
 the CA routines. It is the job of the rendering to ensure that water goes all
-the way to the wall’s mesh, and not just the edge of the CA cube, which would
+the way to the wallâ€™s mesh, and not just the edge of the CA cube, which would
 leave a large gap.</p>
 
 <p>In this scheme, a one-metre-wide corridor with thin wooden
-walls is represented by a plane of “wood” cells, a plane of “air” cells, and
-then a plane of “wood” cells. Since the centres of the cells are each half a
+walls is represented by a plane of â€œwoodâ€ cells, a plane of â€œairâ€ cells, and
+then a plane of â€œwoodâ€ cells. Since the centres of the cells are each half a
 metre away from each other, the total width from wall to wall is still one
 metre. Of course, the graphical representation of the world still shows that
-the “cubes” of wood are not cubes at all but flat planes a few centimetres
+the â€œcubesâ€ of wood are not cubes at all but flat planes a few centimetres
 thick, and this is the representation that will be used for any
 collision-detection, but the distinction makes very little difference to the
-things that are modelled with the CA – water, air, fire. Because these entities
+things that are modelled with the CA â€“ water, air, fire. Because these entities
 are fairly amorphous, the difference between what is rendered and what is
 actually being modelled is very hard for the player to see. Again, accuracy is
 sacrificed for speed wherever the game can get away with it.</p>
 
-<p>The next factor to consider is a gameplay decision – the
+<p>The next factor to consider is a gameplay decision â€“ the
 difference between using passive scenery and active scenery.</p>
 
 <h2>Passive Scenery</h2>
 
 <p>In this system, as far as the CA is concerned, the scenery
 is inert. Water will flow around scenery; fire, air and heat will be stopped by
-scenery. But the scenery is not affected by the actions of the CA in any way –
+scenery. But the scenery is not affected by the actions of the CA in any way â€“
 it does not burn, it does not get damaged, it does not get wet, or move in
 currents. This is the simpler of the two representations, but still allows
 discrete objects such as the ubiquitous oil drum and crate to float away on rivers
 of water, or to explode or burn when heated by fire.</p>
 
 <p>Because the CA only knows about cells, not polygons, the
-scenery must be converted into a cell representation – usually as a
+scenery must be converted into a cell representation â€“ usually as a
 pre-processing step. These cells are simply marked as inert rock or similar,
 and their only function is to ensure that water cannot flow into them, and that
 heat is not exchanged with them. Of course, the scenery is usually a collection
@@ -213,23 +213,23 @@ that represent them, so that water and fire can move through them.</p>
 
 <p>The far more versatile, though also more adventurous option,
 is to have the scenery modelled by the CA as well, and for fire, water and so
-on to affect bits of the scenery. This also opens up the “totally destructible
-world” concept that many are looking to as the next big thing in games, though
+on to affect bits of the scenery. This also opens up the â€œtotally destructible
+worldâ€ concept that many are looking to as the next big thing in games, though
 as with everything, there is nothing truly new in computer games [XCom ref
 again].</p>
 
 <p>In this system, rather than simply being cells of inert
-material, scenery is modelled by its actual properties –current temperature,
+material, scenery is modelled by its actual properties â€“current temperature,
 how easily and fiercely it burns, how strong it is, and so on. As the cells of
 the CA change their state according to the physical rules of the CA, so the
-graphics engine changes how it renders the associated polygonal objects – they
+graphics engine changes how it renders the associated polygonal objects â€“ they
 become sooty, damaged, glow red hot, or (if the graphics engine can handle it)
 they vanish altogether.</p>
 
 <p>In the latter case, the graphics engine can either be of the
-“Geo-Mod” type [Red Faction ref], or the object itself can simply have been
+â€œGeo-Modâ€ type [Red Faction ref], or the object itself can simply have been
 specially marked as destructible, such as a thin wooden wall, and have an
-alternative “broken” representation, as done by current engines when dealing
+alternative â€œbrokenâ€ representation, as done by current engines when dealing
 with damage by weapon fire.</p>
 
 <h1>The Octree</h1>
@@ -238,17 +238,17 @@ with damage by weapon fire.</p>
 quickly noticed that storing half-metre cells for even a modestly-sized level
 consumes a huge amount of memory, and the processing and memory-bandwidth
 requirements become severe. The trick is to not store or process cells that are
-not participating in any interesting activities – notably inert walls, and air
-at ambient or “standard” temperature and pressure (STP).</p>
+not participating in any interesting activities â€“ notably inert walls, and air
+at ambient or â€œstandardâ€ temperature and pressure (STP).</p>
 
 <p>An octree is ideally suited to storing this arrangement,
 specifically a dynamically-allocated octree. In any implementation of the
-octree, remember that by far the most common operation in a CA is “find the
-cell next to this one”, so optimising for this type of operation when
+octree, remember that by far the most common operation in a CA is â€œfind the
+cell next to this oneâ€, so optimising for this type of operation when
 implementing the octree will pay off in terms of speed. If this request is
 made, and there is no neighbouring cell in the octree, it is assumed that the
 neighbouring cell is air at standard temperature and pressure. The physical
-simulations are carried out accordingly, and if they result in the “missing”
+simulations are carried out accordingly, and if they result in the â€œmissingâ€
 cell becoming significantly different from standard temperature and pressure, a
 cell with the new properties is created and inserted in the octree. When an air
 cell returns to within a certain tolerance of standard temperature and
@@ -258,8 +258,8 @@ pressure, it is deleted from the octree and is no longer processed.</p>
 octree. Many games use octrees to optimise collision detection and culling when
 rendering (e.g. frustum culling), and there is no reason this one cannot fulfil
 both roles, and hold objects not directly related to the CA. A fairly easy
-adaptation to the search algorithms allows the octree to become a “loose
-octree,” [ref Thatcher Ulrich] which has several other advantages over a
+adaptation to the search algorithms allows the octree to become a â€œloose
+octree,â€ [ref Thatcher Ulrich] which has several other advantages over a
 conventional octree. This does not change its behaviour when dealing with the
 CA aspect of its behaviour, since all CA cells are aligned to regular intervals
 and have a fixed size.</p>
@@ -296,15 +296,15 @@ gasses and fluids.</p>
 <pre>
 for ( neigh = each neighbour cell )
 {
-    if ( neigh-&gt;Material-&gt;IsInert() )
+Â Â Â  if ( neigh-&gt;Material-&gt;IsInert() )
     {
         continue;
     }
-    float DPress = cell-&gt;Pressure – neigh-&gt;Pressure;
-    float Flow = cell-&gt;Material-&gt;Flow * DPress;
-    Flow = clamp ( Flow, cell-&gt;Pressure / 6.0f, -neigh-&gt;Pressure / 6.0f );
-    cell-&gt;NewPressure -= Flow;
-    neigh-&gt;NewPressure += Flow;
+Â Â Â  float DPress = cell-&gt;Pressure â€“ neigh-&gt;Pressure;
+Â Â Â  float Flow = cell-&gt;Material-&gt;Flow * DPress;
+ Â Â  Flow = clamp ( Flow, cell-&gt;Pressure / 6.0f, -neigh-&gt;Pressure / 6.0f );
+Â Â Â  cell-&gt;NewPressure -= Flow;
+Â Â Â  neigh-&gt;NewPressure += Flow;
 }
 </pre>
 
@@ -334,21 +334,21 @@ scanning the whole array of cells twice. The code becomes:</p>
 <pre>
 if ( cell-&gt;Turn != CurrentTurn )
 {
-    cell-&gt;Turn = CurrentTurn;
-    cell-&gt;Pressure = cell-&gt;NewPressure;
+Â Â Â  cell-&gt;Turn = CurrentTurn;
+Â Â Â  cell-&gt;Pressure = cell-&gt;NewPressure;
 }
 for ( neigh = each neighbour cell )
 {
-    if ( neigh-&gt;Material-&gt;IsInert() )
+Â Â Â  if ( neigh-&gt;Material-&gt;IsInert() )
     {
         continue;
     }
-    if ( neigh-&gt;Turn != CurrentTurn )
-    {
-        neigh-&gt;Turn = CurrentTurn;
-        neigh-&gt;Pressure = neigh-&gt;NewPressure;
-    }
-    // ... same physics code as before ...
+Â Â Â  if ( neigh-&gt;Turn != CurrentTurn )
+Â Â Â  {
+Â Â Â Â Â Â Â  neigh-&gt;Turn = CurrentTurn;
+Â Â Â Â Â Â Â  neigh-&gt;Pressure = neigh-&gt;NewPressure;
+Â Â Â  }
+Â Â Â  // ... same physics code as before ...
 }
 </pre>
 
@@ -356,13 +356,13 @@ for ( neigh = each neighbour cell )
 
 <p>The above simple model works well for uniform redistribution
 of air pressure. At first glance, this is not something that is frequently
-modelled in games, but in fact it is one of the commonest effects – explosions,
+modelled in games, but in fact it is one of the commonest effects â€“ explosions,
 and their effects on things. An explosive is simply a lump of material that
 produces a huge amount of air in a very short time. They can be modelled by
 finding the nearest CA cell to the centre of an exploding grenade, and adding a
-large number to the cell’s pressure, then letting the CA propagate the pressure
+large number to the cellâ€™s pressure, then letting the CA propagate the pressure
 through the world. Damage is done to the surroundings by either high absolute
-pressures or high pressure differences – in reality both do different sorts of
+pressures or high pressure differences â€“ in reality both do different sorts of
 damage to different objects, but that is usually unnecessary complication for
 the purposes of a game.</p>
 
@@ -370,7 +370,7 @@ the purposes of a game.</p>
 ones is that line-of-sight modelling is handled automatically. Explosions in
 confined spaces are far more deadly at a certain range than explosions in open
 spaces, because there is less space for the pressure to dissipate. In addition,
-it shows that pure line-of-sight is not protection enough from explosions –
+it shows that pure line-of-sight is not protection enough from explosions â€“
 they do go around corners and obstructions to a certain degree.</p>
 
 <p>Because the simulation of the flow of air is qualitatively
@@ -388,47 +388,47 @@ incompressible.</p>
 <p>In fact, the easiest way to simulate the transmission of
 pressure through water is to make it slightly compressible. This means pressure
 can be stored as a slight excess mass of water in the cell, above what the
-cell’s volume should be able to hold. In practice, the amount of compression
-needed is tiny – allowing just 1% more water per cell per cube height is easily
+cellâ€™s volume should be able to hold. In practice, the amount of compression
+needed is tiny â€“ allowing just 1% more water per cell per cube height is easily
 enough. In a static body of water whose cells can normally contain one litre of
 water each, the cells at the top will contain one litre, the ones under them
 will contain 1.01 litres, the cells under those will contain 1.02 litres, and
 so on to the bottom. This tiny amount of compression will be completely unnoticeable
 to the player, but has enough dynamic range to allow all the usual properties
 of liquids. For example, the levels of water in two containers joined by a
-submerged pipe will be the same, even if water is poured into one of them – it
+submerged pipe will be the same, even if water is poured into one of them â€“ it
 will flow through the pipe to the other container.</p>
 
 <pre>
 if ( neighbour cell is above this one )
 {
-    if ( ( cell-&gt;Mass &lt; material-&gt;MaxMass ) ||
-         ( neigh-&gt;Mass &lt; material-&gt;MaxMass ) )
-    {
-        Flow = cell-&gt;Mass - material-&gt;MaxMass;
-    }
+Â Â Â Â if ( ( cell-&gt;Mass &lt; material-&gt;MaxMass ) ||
+Â Â Â Â Â Â Â Â  ( neigh-&gt;Mass &lt; material-&gt;MaxMass ) )
+Â Â Â Â {
+Â Â Â Â Â Â Â Â Flow = cell-&gt;Mass - material-&gt;MaxMass;
+Â Â Â Â }
     else
     {
-        Flow = cell-&gt;Mass – neigh-&gt;Mass - material-&gt;MaxCompress;
-        Flow *= 0.5f;
+Â Â Â Â Â Â Â Â Flow = cell-&gt;Mass â€“ neigh-&gt;Mass - material-&gt;MaxCompress;
+Â Â Â Â Â Â Â Â Flow *= 0.5f;
     }
 }
 else if ( neighbour cell is below this one )
 {
-    if ( ( cell-&gt;Mass &lt; material-&gt;MaxMass ) ||
-         ( neigh-&gt;Mass &lt; material-&gt;MaxMass ) )
-    {
-        Flow = material-&gt;MaxMass - neigh-&gt;Mass;
-    }
+Â Â Â Â if ( ( cell-&gt;Mass &lt; material-&gt;MaxMass ) ||
+Â Â Â Â Â Â Â Â  ( neigh-&gt;Mass &lt; material-&gt;MaxMass ) )
+Â Â Â  {
+Â Â Â Â Â Â Â Â Flow = material-&gt;MaxMass - neigh-&gt;Mass;
+Â Â Â  }
     else
     {
-        Flow = cell-&gt;Mass – neigh-&gt;Mass + material-&gt;MaxCompress;
-        Flow *= 0.5f; 
-    }
+Â Â Â Â Â Â Â Â Flow = cell-&gt;Mass â€“ neigh-&gt;Mass + material-&gt;MaxCompress;
+Â Â Â Â Â Â Â Â Flow *= 0.5f; 
+Â Â Â Â }
 }
 else // neighbour is on same level
 {
-    Flow = ( cell-&gt;Mass – neigh-&gt;Mass ) * 0.5f;
+    Flow = ( cell-&gt;Mass â€“ neigh-&gt;Mass ) * 0.5f;
 }
 </pre>
 
@@ -439,24 +439,24 @@ negative.</p>
 
 <p>The two cases of code for both the up and the down case deal
 with different situations. The first case is where one of the two cells is not
-full of water – on the surface of a body of water, or if the water is splashing
-or falling (for example, in a waterfall). Here, the behaviour is simple – water
-flows downwards to fill the lower cell of the two to the value MaxMass – this
-is the mass of water that can be contained by a single cell’s volume. In the
+full of water â€“ on the surface of a body of water, or if the water is splashing
+or falling (for example, in a waterfall). Here, the behaviour is simple â€“ water
+flows downwards to fill the lower cell of the two to the value MaxMass â€“ this
+is the mass of water that can be contained by a single cellâ€™s volume. In the
 example above, the mass of 1 litre of water.</p>
 
 <p>The second case is where both cells are full of water, or
 perhaps a bit over-full. This is an area of water that is at pressure, and are
 cells in the middle of a body of water. Here, the flow acts to try to make sure
 that the upper cell has exactly MaxCompress more water than the lower cell.
-MaxCompress is the amount of “extra” water that can be fitted in because of
-compression – in the example above, it would be the mass of 0.01 litres of
+MaxCompress is the amount of â€œextraâ€ water that can be fitted in because of
+compression â€“ in the example above, it would be the mass of 0.01 litres of
 water.</p>
 
 <h1>Flow</h1>
 
 <p>So far the air and water models have ignored a fairly
-important property of any liquid or gas – its speed of flow. It has  simply
+important property of any liquid or gas â€“ its speed of flow. It hasÂ  simply
 taken the difference in pressures between two cells, and used that to move mass
 around. This is fine for relatively static environments that we wish to bring
 to a stable state (uniform air pressure, or water finding its level). Many
@@ -479,7 +479,7 @@ three-dimensional vector, and not a scalar like mass.</p>
 
 <p>There are two possible ways to think about flow. The first
 is to think of a flow vector as being the flow through the centre of the cell.
-This is possibly the most intuitive model – the flow and the mass of the cell
+This is possibly the most intuitive model â€“ the flow and the mass of the cell
 are both measured at its centre. However, in this case, the flow is affected by
 the pressure differential between the two neighbouring cells, and in turn
 determines how mass flows from one neighbouring cell to the other. Note the
@@ -489,11 +489,11 @@ change the mass of the cell (only its neighbours). This is a slightly
 surprising result, and in some cases can lead to some odd behaviour.</p>
 
 <p>The more useful model is to think of each component of the
-flow vector as being the flow between two adjacent nodes – from the “current”
+flow vector as being the flow between two adjacent nodes â€“ from the â€œcurrentâ€
 node to the node in the positive relevant direction. Thus the flow vector F
 stored at cell (x,y,z) has the meaning that F.x is the flow from cell (x,y,z)
 to cell (x+1,y,z); F.y is the flow from cell (x,y,z) to cell (x,y+1,z); and
-similarly for F.z. The “meaning” of the vector F is now not as intuitive, but
+similarly for F.z. The â€œmeaningâ€ of the vector F is now not as intuitive, but
 the physical model does seem more sensible. In practice, this is the most
 common model, but either model can be used for simulation with appropriate
 adjustment of the various constants.</p>
@@ -505,12 +505,12 @@ encourage them to build up, and sufficient damping must be applied to the flow
 dying down, and the liquid or gas starts to do very odd things indeed.</p>
 
 <p>It is worth mentioning that although one of the most common
-applications of flow is in rivers, in most “human-sized” games, large bodies of
+applications of flow is in rivers, in most â€œhuman-sizedâ€ games, large bodies of
 water such as lakes and rivers are frequently far too large to participate in
 gameplay. Their behaviour will stay fairly constant whatever the player does,
 and if they do change, they will do so in highly constrained ways. They do not
 usually require the flexibility of a CA, and are often far better modelled and
-rendered in more conventional ways – pre-animated meshes and collision models,
+rendered in more conventional ways â€“ pre-animated meshes and collision models,
 and scripted events. However, there are many other genres that operate on
 larger scales and will want to properly simulate rivers with a CA.</p>
 
@@ -518,21 +518,21 @@ larger scales and will want to properly simulate rivers with a CA.</p>
 
 <p>Transmitting heat through the environment, whether from
 burning objects or from other sources, happens through three separate
-mechanisms – conduction, convection and radiation.</p>
+mechanisms â€“ conduction, convection and radiation.</p>
 
 <h2>Conduction</h2>
 
 <p>Conduction is the simplest to simulate. Neighbouring cells
 pass heat energy between each other so that eventually they reach the same
 temperature as each other. This is complicated because different materials are
-heated by different amounts by the same amount of energy – called the Specific
-Heat Capacity (SHC – usually measured in J/kg°C).
+heated by different amounts by the same amount of energy â€“ called the Specific
+Heat Capacity (SHC â€“ usually measured in J/kgÂ°C).
 If a hot cell made of water (high SHC, hard to heat up) is next to a colder
 cell made of the same mass of iron (low SHC), equilibrium will be reached at
 somewhere very close to the original temperature of the water, not at the
 average of the two temperatures. This is because when a given amount of energy
-is transferred from the water to the iron, the water’s temperature drops far
-less than the iron’s temperature rises.</p>
+is transferred from the water to the iron, the waterâ€™s temperature drops far
+less than the ironâ€™s temperature rises.</p>
 
 <p>Note that the above example is true for the same <i>mass</i>
 of each substance. However, iron has a far greater density than water, and
@@ -546,11 +546,11 @@ float EnergyFlow = neigh-&gt;Temp - cell-&gt;Temp;
 // Convert from heat to energy
 if ( EnergyFlow &gt; 0.0f )
 {
-    EnergyFlow *= HCNeigh;
+Â Â Â Â EnergyFlow *= HCNeigh;
 }
 else
 {
-    EnergyFlow *= HCCell;
+Â Â Â Â EnergyFlow *= HCCell;
 }
 
 // A constant according to cell update speed.
@@ -561,24 +561,24 @@ cell-&gt;Temp += EnergyFlow / HCCell;
 
 // Detect and kill oscillations.
 if (((EnergyFlow&gt;0.0f)&amp;&amp;(neigh-&gt;Temp&lt;cell-&gt;Temp))||
-    ((EnergyFlow&lt;=0.0f)&amp;&amp;(neigh-&gt;Temp&gt;cell-&gt;Temp)))
+Â Â Â  ((EnergyFlow&lt;=0.0f)&amp;&amp;(neigh-&gt;Temp&gt;cell-&gt;Temp)))
 {
-    float TotalEnergy = HCCell * cell-&gt;Temp +
-                        HCNeigh * neigh-&gt;Temp;
-    float AverageTemp = TotalEnergy / ( HCCell + HCNeigh );
-    cell-&gt;Temp = AverageTemp;
+Â Â Â Â float TotalEnergy = HCCell * cell-&gt;Temp +
+Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â Â  HCNeigh * neigh-&gt;Temp;
+Â Â Â  float AverageTemp = TotalEnergy / ( HCCell + HCNeigh );
+Â Â Â Â cell-&gt;Temp = AverageTemp;
     neigh-&gt;Temp = AverageTemp;
 }
 </pre>
 
 <p>The code at the end is necessary if two materials with very
-different SHCs are side by side – the temperatures of the two can oscillate
+different SHCs are side by side â€“ the temperatures of the two can oscillate
 violently, and can grow out of control. The physically correct solution is to
 integrate the transfer of heat over time. However, this approach simply finds
 the weighted average temperature (i.e. the temperature that the system would
 reach eventually). It is less accurate, but looks perfectly good to the eye,
 and is quite a bit quicker to execute. Importantly, it obeys the conservation
-of energy, so any artefacts are purely temporary – the longer-term state is the
+of energy, so any artefacts are purely temporary â€“ the longer-term state is the
 same as a more realistic simulation.</p>
 
 <h2>Convection</h2>
@@ -593,7 +593,7 @@ be faked as described below in the section on fire.</p>
 
 <h2>Radiation</h2>
 
-<p>Hot things glow – they emit light at various wavelengths
+<p>Hot things glow â€“ they emit light at various wavelengths
 which travels in straight lines, hits other surfaces, and in turn heats them
 up. This effect is very important physically, but unfortunately is also
 extremely expensive to model. Each source of heat must effectively shoot many
@@ -607,7 +607,7 @@ of radiative heat modelling. Even with these algorithms, modelling even a
 fraction of the radiative heat seems like a prohibitive amount of work for a
 game. These algorithms are also extremely complex, and do not involve the
 standard cell-to-cell interactions that model all the other physical properties
-mentioned – for both these reasons, they are well beyond the scope of this Gem.
+mentioned â€“ for both these reasons, they are well beyond the scope of this Gem.
 The application of radiation to fire is discussed further below.</p>
 
 <h1>Fire</h1>
@@ -634,7 +634,7 @@ temperature).</p>
 
 
 <pre>
-float Temp = cell-&gt;Temp – material-&gt;Flashpoint;
+float Temp = cell-&gt;Temp â€“ material-&gt;Flashpoint;
 if ( Temp < 0.0f )
 {
     // Not burning.
@@ -672,7 +672,7 @@ hot, and thus it relies heavily on the modelling of heat flow by the three
 methods discussed above. In real-life fires, convection and radiation are
 incredibly important for their behaviour. Convection makes fires spread
 vertically far easier than spreading across floors, and leads to distinctive
-“walls of fire” in burning buildings. Radiation concentrates fire in corners of
+â€œwalls of fireâ€ in burning buildings. Radiation concentrates fire in corners of
 rooms, causing fire to spread up the corners of room first.</p>
 
 <p>Sadly, radiative heat, as mentioned above, is extremely hard
@@ -687,7 +687,7 @@ of heat far easier in an upwards direction. In real life, a section of burning
 wall heats the air beside it, which rises, heats the section of wall higher up,
 which makes it far easier for the flames to spread upwards. In
 this hack, conduction of heat is made artificially asymmetrical. In the model
-presented above, a single factor – ConstantEnergyFlowFactor – was 
+presented above, a single factor â€“ ConstantEnergyFlowFactor â€“ was 
 used for heat conduction for all six neighbors of a cell.
 Instead of this, a higher figure is used when conducting heat upwards,
 and a lower figure when conducting heat downwards.</p>
@@ -697,7 +697,7 @@ pre-computation could be done using the same techniques as radiosity to decide
 which parts of a room would be more susceptible to fire because of the feedback
 effects of radiative heat. One possibility is computing the ambient
 occlusion term [Ambient ref] and using that to boost the heat generated
-by fire – generally around the edges and corners.</p>
+by fire â€“ generally around the edges and corners.</p>
 
 <p>A factor that may not be immediately obvious is that these
 hacks are far more controllable than any realistic solution. Convection in real
@@ -714,15 +714,15 @@ desirable quality in a game than absolute realism.</p>
 <p>The nature of some of the physical properties being
 simulated here require high update rates to maintain realism. The flow of any
 property from one cell to another can only proceed at a maximum speed of one
-cell per update cycle. Fire may spread quickly – metres per second or faster.
-Water spilling from a container may move faster – tens of metres per second.
-Explosions require extremely high update rates – real-life explosion shock
-waves spread at the speed of sound – roughly 340m/s.</p>
+cell per update cycle. Fire may spread quickly â€“ metres per second or faster.
+Water spilling from a container may move faster â€“ tens of metres per second.
+Explosions require extremely high update rates â€“ real-life explosion shock
+waves spread at the speed of sound â€“ roughly 340m/s.</p>
 
 <p>Simulating all the above implies that update rates of 680
 cycles per second may be required. This is an awesome speed, and it seems
 unlikely any current platform can sustain these sorts of update rates for a
-decently-sized game world – the number of cells to update per second is
+decently-sized game world â€“ the number of cells to update per second is
 enormous.</p>
 
 <p>As with the optimisation of not storing or processing cells
@@ -750,8 +750,8 @@ that this system only works if the update rates are quantised to powers-of-two.
 For example, if a child node needs to be updated every third turn, but the
 parent node is marked as being updated every second turn, every sixth turn the
 child node needs updating, but the parent does not. Because of the traversal
-algorithm’s early-out path, the child does not get updated this time, and in
-the end only gets updated every sixth turn – half the required frequency.
+algorithmâ€™s early-out path, the child does not get updated this time, and in
+the end only gets updated every sixth turn â€“ half the required frequency.
 Quantising update rates to powers of two solves this problem, and also allows
 some slight extra efficiency by storing the update rates as the power, rather
 than the actual number.</p>
@@ -765,7 +765,7 @@ the various equations over the given period. However, one of the purposes of
 the variable update rate is to choose an update rate to ensure that cells have
 fairly constant behaviour over the update interval.</p>
 
-<p>This assumption makes integration rather simple – simply
+<p>This assumption makes integration rather simple â€“ simply
 multiply the given behaviour (water flow, heat flow, burn rate, etc) by the
 time period since the last update. This slight extra complication is more than
 offset by the savings in processing time and memory bandwidth from the huge
@@ -808,13 +808,13 @@ rather than as a collection of polygonal entities.</p>
 
 <p>[Conway Turing ref] An "implementation" of a Turning Machine within Conway's Game of Life, written by Paul Rendell. The original site has vanished off the web, but Archive.org still has a copy here: <a href="http://web.archive.org/web/20030210114324/http://www.rendell.uk.co/gol/tm.htm">http://web.archive.org/web/20030210114324/http://www.rendell.uk.co/gol/tm.htm</a></p>
 
-<p>[XCom ref] “X-Com: UFO Defense”(US)/”UFO: Enemy Unknown”(UK)
+<p>[XCom ref] â€œX-Com: UFO Defenseâ€(US)/â€œUFO: Enemy Unknownâ€(UK)
 Microprose, 1994 (<a href="http://www.lasersquadnemesis.com/AboutUs.htm">Codo games</a>, <a href="http://www.mobygames.com/game/dos/x-com-ufo-defense">Mobygames</a> and <a href="http://en.wikipedia.org/wiki/Xcom">Wikipedia</a>)</p>
 
-<p>[Red Faction ref] “Red Faction”, developed by Volition Inc,
+<p>[Red Faction ref] â€œRed Factionâ€, developed by Volition Inc,
 published by THQ Inc, 2000 (<a href="http://www.mobygames.com/game/windows/red-faction">Mobygames</a>). It should be noted that as far as I know, Red Faction did not use the sort of voxelised representation discussed here. My belief (from experimentation) is that it created a BSP representation of the scenery, and as the various "geomod" weapons and abilities were used, they inserted planes and nodes into the BSP. However, it is a good example of a game that takes the idea of "everything is destructible" and makes it a core gameplay feature.</p>
 
-<p>[Thatcher Ulrich ref] “Loose Octrees”, Thatcher Ulrich, Game
+<p>[Thatcher Ulrich ref] â€œLoose Octreesâ€, Thatcher Ulrich, Game
 Programming Gems, Charles River Media, 2000 (<a href="http://tulrich.com/geekstuff/">http://tulrich.com/geekstuff/</a>)</p>
 
 <p>[Ambient ref] Ambient occlusion turns out to be the DC component of the elegantly general Spherical Harmonic representation. A good introduction to SH for the games programmer is a presentation I did in 2003 called <a href="http://www.eelpi.gotdns.org/papers/papers.html">Spherical Harmonics in Actual Games</a>.</p>

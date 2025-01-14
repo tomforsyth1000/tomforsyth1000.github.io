@@ -181,7 +181,7 @@ Month="3" Day="22" Year="2007">22<sup>nd</sup> March 2007</st1:date></p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal>A “<span class=SpellE>trilight</span>” lighting equation is
+<p class=MsoNormal>A â€œ<span class=SpellE>trilight</span>â€ lighting equation is
 a generalisation of a bunch of lighting models people have used in games over
 the years:</p>
 
@@ -206,16 +206,16 @@ colour0 * clamp(<span class=SpellE>N.L+factor</span>)/(1+factor)</p>
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
 <p class=MsoNormal>The problem with pure Lambert lighting is that 50% of your
-model is completely dark, so the back side doesn’t really show up very well
+model is completely dark, so the back side doesnâ€™t really show up very well
 without adding more lights. A wrap-around light is a very crude simulation of
 the light scattering back from the surroundings and lighting the back side to
 some extent. This has been used by a variety of games for ages, but the first
-place I’ve seen it actually documented was in an aside in an article about Half
-Life 2’s lighting model.</p>
+place Iâ€™ve seen it actually documented was in an aside in an article about Half
+Life 2â€™s lighting model.</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal>“<span class=GramE>factor</span>” ranges from 0 to 1, with
+<p class=MsoNormal>â€œ<span class=GramE>factor</span>â€ ranges from 0 to 1, with
 many games just hard-wiring it to 1.</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
@@ -227,10 +227,10 @@ many games just hard-wiring it to 1.</p>
 <p class=MsoNormal><span class=SpellE><span class=GramE>res</span></span> =
 lerp ( colour2, colour0, (N.L+1)/2 )</p>
 
-<p class=MsoNormal><span style='mso-tab-count:1'>            </span>= colour2 +
+<p class=MsoNormal><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>= colour2 +
 (colour0-colour2) * (N.L+1)/2</p>
 
-<p class=MsoNormal><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 (colour0+colour2)/2 + (colour0-colour2) * (N.L)/2</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
@@ -238,14 +238,14 @@ lerp ( colour2, colour0, (N.L+1)/2 )</p>
 <p class=MsoNormal>This has also been used in many games for ages, but the
 first time I remember seeing it actually documented was in a talk by Chas Boyd
 of Microsoft talking about more interesting light models. This is good for
-outdoor scenes – typically the colours are a light blue for the sky and a dark
+outdoor scenes â€“ typically the colours are a light blue for the sky and a dark
 greenish/brown for the ground. These are the preset colours in the <span
 class=SpellE>trilight</span> demo.</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal>Note – I’ve used colour0 and colour2, missing out colour1 to
-be consistent with the <span class=SpellE>trilight’s</span> terminology below.</p>
+<p class=MsoNormal>Note â€“ Iâ€™ve used colour0 and colour2, missing out colour1 to
+be consistent with the <span class=SpellE>trilightâ€™s</span> terminology below.</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
@@ -258,8 +258,8 @@ colour0 * clamp(N.L) + colour2 * clamp(-N.L)</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
-<p class=MsoNormal>Yet another lighting model used for ages. The first place I’ve
-seen it documented is in an article on <span class=SpellE>Tabula</span> Rasa’s
+<p class=MsoNormal>Yet another lighting model used for ages. The first place Iâ€™ve
+seen it documented is in an article on <span class=SpellE>Tabula</span> Rasaâ€™s
 rendering model in an upcoming GPU Gems book. This is distinct from the
 hemispherical lighting model because a lit sphere will have a ring around the
 middle between the two lights. In hemispherical lighting, this ring is the
@@ -269,8 +269,8 @@ This is fairly simple to see when playing with the demo.</p>
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
 <p class=MsoNormal>This lighting model is a cheap approximation of the classic
-movie lighting of “key” and “fill” lights. The usual example is at night - a
-bright yellow “key” light from a streetlamp and a dark-blue “fill” light from
+movie lighting of â€œkeyâ€ and â€œfillâ€ lights. The usual example is at night - a
+bright yellow â€œkeyâ€ light from a streetlamp and a dark-blue â€œfillâ€ light from
 the night sky to give shape to the dark parts of the character. In fact usually
 the fill is not directly opposite the key light, but this is a very similar
 effect and is basically free.</p>
@@ -288,8 +288,8 @@ colour0 * clamp(N.L) + colour1 * (1-abs(N.L)) + colour2 * clamp(-N.L)</p>
 
 <p class=MsoNormal>The idea of the <span class=SpellE>trilight</span> is to
 unify all the above lighting models into one. As a bonus, it also gives more
-control than any one of them. In the same way that I’ve never seen the above
-lighting models documented until fairly recently, but I know they’ve been used
+control than any one of them. In the same way that Iâ€™ve never seen the above
+lighting models documented until fairly recently, but I know theyâ€™ve been used
 for ages, I suspect this model has been used by others even before I did (which
 I think was sometime in 2002). But I thought it was time to write the thing
 down so that everyone could use it.</p>
@@ -297,7 +297,7 @@ down so that everyone could use it.</p>
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
 <p class=MsoNormal>The <span class=SpellE>trilight</span> is obviously a superset
-of Lambert and bi-directional – simply set colour1 and/or colour2 to black.</p>
+of Lambert and bi-directional â€“ simply set colour1 and/or colour2 to black.</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
@@ -311,19 +311,19 @@ lighting if colour1 = (colour0+colour2)/2. Proof:</p>
 <p class=MsoNormal style='text-indent:36.0pt'><span class=SpellE><span
 class=GramE>trilight</span></span> = colour0 * (N.L) + colour1 * (1-(N.L))</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 colour0 * (N.L) + colour1 - colour1 * (N.L)</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 (colour0-colour1) * (N.L) + colour1</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 (colour0-(colour0+colour2)/2) * (N.L) + (colour0+colour2)/2</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 ((colour0-colour2)/2) * (N.L) + (colour0+colour2)/2</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 same as hemispherical</p>
 
 <p class=MsoNormal>For N.L &lt; 0:</p>
@@ -331,16 +331,16 @@ same as hemispherical</p>
 <p class=MsoNormal style='text-indent:36.0pt'><span class=SpellE><span
 class=GramE>trilight</span></span> = colour1 * (1+(N.L)) - colour2 * (N.L)</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 -colour2 * (N.L) + colour1 + colour1 * (N.L)</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 (colour1-colour2) * (N.L) + colour1</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 ((colour0+colour2)/2-colour2) * (N.L) + (colour0+colour2)/2</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 ((colour0-colour2)/2) * (N.L) + (colour0+colour2)/2</p>
 
 <p class=MsoNormal style='margin-left:36.0pt;text-indent:36.0pt'>= same as
@@ -354,7 +354,7 @@ hemispherical</p>
 
 <p class=MsoNormal>The <span class=SpellE>trilight</span> is very close to wrap-around
 lighting when colour2 = black, colour1 = factor*colour0/2. This is only an
-approximation, but it’s pretty close as you can see from the demo and from the
+approximation, but itâ€™s pretty close as you can see from the demo and from the
 following:</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
@@ -367,10 +367,10 @@ class=GramE>trilight</span></span> = colour0 * (N.L) + colour1 * (1-(N.L))</p>
 <p class=MsoNormal style='margin-left:36.0pt;text-indent:36.0pt'>= colour0 *
 (N.L) + factor *colour0* (1-(N.L))/2</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 colour0 * ((N.L) + factor /2 - factor *(N.L)/2)</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 colour0 * ((N.L)*(2- factor) + factor))/2</p>
 
 <p class=MsoNormal>For N.L &lt; 0:</p>
@@ -378,13 +378,13 @@ colour0 * ((N.L)*(2- factor) + factor))/2</p>
 <p class=MsoNormal style='text-indent:36.0pt'><span class=SpellE><span
 class=GramE>trilight</span></span> = colour1 * (1+(N.L)) - colour2 * (N.L)</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 colour1 * (1<span class=GramE>+(</span>N.L))</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 factor *colour0 * (1<span class=GramE>+(</span>N.L))/2</p>
 
-<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>            </span>=
+<p class=MsoNormal style='text-indent:36.0pt'><span style='mso-tab-count:1'>Â Â Â Â Â Â Â Â Â Â Â  </span>=
 colour0 * (factor /2) * ((N.L<span class=GramE>)+</span>1)</p>
 
 <p class=MsoNormal style='text-indent:36.0pt'><o:p>&nbsp;</o:p></p>
@@ -401,7 +401,7 @@ greatest discrepancy is when factor=0.5. Looking at the Excel spreadsheet you
 can see how the two curves differ at this value, and by toggling on and off <span
 class=SpellE>trilight</span> emulation in the demo, you can see that there is a
 redistribution of shade from light to dark areas, causing a slight washing-out
-of contrast. However, changing the “factor” value is done in response to moving
+of contrast. However, changing the â€œfactorâ€ value is done in response to moving
 from a stark, purely-<span class=SpellE>Lambertian</span> lighting environment
 into an environment with more back-lighting from indirect bounces, so the whole
 thing is just an approximation anyway. As previously mentioned, many games just
@@ -440,7 +440,7 @@ gets that little bit simpler.</p>
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
 
 <p class=MsoNormal>You probably want to make the demo <span class=SpellE>fullscreen</span>
-– <span class=GramE>there’s</span> a lot of sliders in the bottom right. From
+â€“ <span class=GramE>thereâ€™s</span> a lot of sliders in the bottom right. From
 top to bottom:</p>
 
 <p class=MsoNormal><o:p>&nbsp;</o:p></p>
@@ -448,21 +448,21 @@ top to bottom:</p>
 <ul style='margin-top:0cm' type=disc>
  <li class=MsoNormal style='mso-list:l0 level1 lfo1;tab-stops:list 36.0pt'>The
      three colours, each with a red, green and blue slider. Move the slides to
-     change the colours. Some light types don’t use some of the colours.</li>
+     change the colours. Some light types donâ€™t use some of the colours.</li>
  <li class=MsoNormal style='mso-list:l0 level1 lfo1;tab-stops:list 36.0pt'>The
-     light factor – only used for the wraparound light type. 0 = no wraparound,
+     light factor â€“ only used for the wraparound light type. 0 = no wraparound,
      1= full wraparound.</li>
  <li class=MsoNormal style='mso-list:l0 level1 lfo1;tab-stops:list 36.0pt'>The
-     light type – <span class=GramE>this switches</span> between the five light
+     light type â€“ <span class=GramE>this switches</span> between the five light
      types in this article.</li>
  <li class=MsoNormal style='mso-list:l0 level1 lfo1;tab-stops:list 36.0pt'>Enable
      <span class=SpellE>trilight</span> emulation. When selected, this uses a <span
      class=SpellE>trilight</span> emulation of the light type instead of using
      the real lighting equation. As said above, this emulation is perfect
-     except in the case of the wraparound light – by selecting that type and
+     except in the case of the wraparound light â€“ by selecting that type and
      toggling this button on and off, you can see the slight differences.</li>
  <li class=MsoNormal style='mso-list:l0 level1 lfo1;tab-stops:list 36.0pt'>Enable
-     <span class=SpellE>preshaders</span>. <span class=SpellE>Ooops</span> –
+     <span class=SpellE>preshaders</span>. <span class=SpellE>Ooops</span> â€“
      left over from the D3D demo I started with. Ignore it.</li>
  <li class=MsoNormal style='mso-list:l0 level1 lfo1;tab-stops:list 36.0pt'>Change
      model. Toggles the model between a spiky-haired young lady and a sphere.</li>

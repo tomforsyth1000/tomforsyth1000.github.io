@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<title>Impostors – Adding Clutter</title>
+		<title>Impostors â€“ Adding Clutter</title>
 		<style>
 			<!--
  /* Style Definitions */
@@ -11,20 +11,20 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 --></style>
 	</head>
 	<body lang="EN-GB" link="blue" vlink="#606420">
-		<p class="MsoTitle">Impostors – Adding Clutter</p>
-		<h1>Impos…what?</h1>
+		<p class="MsoTitle">Impostors â€“ Adding Clutter</p>
+		<h1>Imposâ€¦what?</h1>
 		<p>Impostoring is a term that is probably not familiar to many reading this. 
-			However, the concept may be – it has surfaced in various forms many times in 
+			However, the concept may be â€“ it has surfaced in various forms many times in 
 			the history of 3D graphics. Simply put, it is about using sprites in a 3D 
 			scene, but instead of an artist drawing or rendering the sprites beforehand, 
 			they are updated on the fly by rendering triangles to them.</p>
 		<p>Instead of rendering a high-triangle object every frame, the high-triangle 
-			object is rendered to a texture only occasionally – usually on the order of 
+			object is rendered to a texture only occasionally â€“ usually on the order of 
 			once every five to fifty frames. But every frame this texture is mapped onto a 
 			much lower-triangle object and drawn.</p>
 		<p>The main target for impostors is scenes with lots of small static objects in 
-			them – clutter. Each of these objects will use an impostor, and most will be 
-			redrawn at a much lower rate than the main scene’s frame rate. By doing this, 
+			them â€“ clutter. Each of these objects will use an impostor, and most will be 
+			redrawn at a much lower rate than the main sceneâ€™s frame rate. By doing this, 
 			the perceived triangle density is far higher than the actual one, and the 
 			visual quality allowed by all these incidental objects considerably increases 
 			the realism of the scene. The main difference between an office or house in a 
@@ -34,13 +34,13 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			usually a bottleneck, and reducing this for some objects allows greater 
 			triangle detail to be used on others. An impostor is a single texture, whereas 
 			rendering the object normally may require multiple textures and multiple 
-			texture layers – changing texture flushes the texture cache and may require 
+			texture layers â€“ changing texture flushes the texture cache and may require 
 			extra texture management from either the driver, the API, or the application. 
 			Drawing the object each frame requires that it be lit each frame, even if the 
 			lighting has not changed, and as lighting techniques become more sophisticated, 
 			lighting becomes more expensive. And finally there is usually plenty of 
 			application overhead when just thinking about drawing an object, even before a 
-			single API call is made – using impostors can avoid much of that work.</p>
+			single API call is made â€“ using impostors can avoid much of that work.</p>
 		<h1>The Whole Process</h1>
 		<ul>
 			<li>
@@ -49,7 +49,7 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 				Rendering the impostor texture on the screen each frame. I call this 
 				&quot;rendering&quot; the impostor.</li>
 			<li>
-				Rendering the impostor’s mesh at low speeds to the texture. I call this 
+				Rendering the impostorâ€™s mesh at low speeds to the texture. I call this 
 				&quot;updating&quot; the impostor.</li>
 			<li>
 				Deciding when to update the impostor, and when to leave it.</li>
@@ -100,7 +100,7 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			intended, because the impostor has only a single alpha channel to express the 
 			amount of background to allow through. Fortunately, these sorts of effects are 
 			rarely used on objects that are suitable for impostoring. Note this only 
-			applies to actual translucent effects – opaque multi-pass rendering that uses 
+			applies to actual translucent effects â€“ opaque multi-pass rendering that uses 
 			alpha-blending to combine the passes (e.g. light maps, detail maps, etc) will 
 			be fine, as long as the final alpha-channel value is carefully controlled.</p>
 		<h2>Billboard Quad</h2>
@@ -127,7 +127,7 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			bounding box of the object is drawn, with the impostor texture projected on it. 
 			Because the bounding box is a real 3D object, its Z-buffer properties can be 
 			controlled far better than a screen-aligned quad. In particular, its Z-buffer 
-			properties are now independent of the camera position – they only depend on the 
+			properties are now independent of the camera position â€“ they only depend on the 
 			object position and orientation, which is one less thing the app has to worry 
 			about.</p>
 		<p>Bounding boxes actually work quite well. Most things in everyday life fill their 
@@ -143,7 +143,7 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 		<h2>Bounding Object</h2>
 		<p>There are plenty of objects for which a bounding box is not a good enough 
 			approximation, and leads to unnecessary Z-buffer clashes. There is also another 
-			factor to consider in choosing the shape of the impostor – parallax error. The 
+			factor to consider in choosing the shape of the impostor â€“ parallax error. The 
 			whole point of a 3D scene is that a camera can move through it, even if the 
 			objects in the scene are stationary. A box painted with a picture of something 
 			on it is not going to look like that something for long when the camera starts 
@@ -167,13 +167,13 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			is bound to be larger than the image it represents. Using a higher-tri impostor 
 			object can help reduce this in the case of entirely convex source objects. 
 			However, for non-convex source objects, this does not noticeably improve 
-			matters – the impostor object must remain convex, and no amount of tris will 
+			matters â€“ the impostor object must remain convex, and no amount of tris will 
 			allow it to match a concave object.</p>
 		<p>Another way to deal with this is to move the texture co-ordinates at each vertex 
 			each frame. The tri counts involved are fairly low, so a bit more work at each 
-			vertex is unlikely to hurt performance much. The principle is fairly simple – 
+			vertex is unlikely to hurt performance much. The principle is fairly simple â€“ 
 			figure out where on the real object (and thus the impostor texture image) each 
-			impostor object’s vertex lies when viewed from a certain angle. As this viewing 
+			impostor objectâ€™s vertex lies when viewed from a certain angle. As this viewing 
 			angle changes, the texel that the vertex lies over will change. So for a new 
 			viewing angle, trace the line from the viewer through the impostor object 
 			vertex to the original object. Then work out which texel this part of the 
@@ -185,14 +185,14 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			&quot;chasm&quot; in the object and, because of the low density of vertices in 
 			the impostor object, producing large warps over the image. Another problem is 
 			what to do with vertices at the edge of the impostor object that do not map to 
-			any part of the real object at all – what happens to them? Some sort of 
+			any part of the real object at all â€“ what happens to them? Some sort of 
 			interpolation seems to be needed from the visible edges of the object, out to 
 			these vertices. This is the sort of work that an app does not want to be doing 
 			at runtime, however few vertices it involves.</p>
 		<p>In practice what I have found to be far simpler, and works just fine, is to give 
-			each vertex a &quot;parallax factor&quot; – the number of image texels to move 
+			each vertex a &quot;parallax factor&quot; â€“ the number of image texels to move 
 			per degree of viewer movement. This is a factor usually tweaked by hand, and 
-			easily determines the vertex’s texel co-ordinates at runtime. This factor is 
+			easily determines the vertexâ€™s texel co-ordinates at runtime. This factor is 
 			only done once for each impostor object vertex, and hand-tweaking around eight 
 			to ten vertices per object does not take long.</p>
 		<p>Alternatively, to generate these parallax values automatically for moderately 
@@ -249,8 +249,8 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 		<p>Changing the viewing angle is probably the most obvious factor that decides an 
 			impostor update. Note that what is important is the vector from the camera to 
 			the object in object space. This will change when the object rotates, and also 
-			when the camera moves, both of which are important. The camera’s direction of 
-			view is unimportant – unless an enormous field of view is used, the object does 
+			when the camera moves, both of which are important. The cameraâ€™s direction of 
+			view is unimportant â€“ unless an enormous field of view is used, the object does 
 			not change appearance much when the camera rotates, only when it moves.</p>
 		<h2>Camera Distance</h2>
 		<p>As well as the direction from the object to the camera, the distance between the 
@@ -271,7 +271,7 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			&quot;important&quot; objects. Items that are purely in the scene to create an 
 			ambience, but are not usually involved in the gameplay can be assigned a 
 			relatively large screen error. The player will not be examining them terribly 
-			closely – their attention is likely to be elsewhere. So these objects can be 
+			closely â€“ their attention is likely to be elsewhere. So these objects can be 
 			more wrong before the player notices the error.</p>
 		<h1>Efficiency</h1>
 		<p>The main efficiency hit on most cards is changing rendertarget. This causes 
@@ -290,9 +290,9 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 		<p>When allocating a block of a certain size, it should be allocated as far down 
 			the quadtree as possible, i.e. in a node that is the correct size. If no node 
 			is the correct size, the smallest possible node should be split up to create 
-			it. This again prevents larger blocks being split up unnecessarily – they may 
-			be used later by a large impostor. Although this sounds expensive – having to 
-			scan the whole quadtree for the smallest node – in practice a lot of caching 
+			it. This again prevents larger blocks being split up unnecessarily â€“ they may 
+			be used later by a large impostor. Although this sounds expensive â€“ having to 
+			scan the whole quadtree for the smallest node â€“ in practice a lot of caching 
 			can be done, and it does not take a significant amount of time.</p>
 		<h1>Prediction</h1>
 		<p>When updating an impostor, the current state of the object is rendered to the 
@@ -312,17 +312,17 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 			in the first place. It should be reasonably simple to add some useful forward 
 			prediction onto games such as this.</p>
 		<p>However, with games such as first-person-shooters, objects in the world are 
-			basically split into two distinct categories – those that almost never move 
+			basically split into two distinct categories â€“ those that almost never move 
 			(walls, furniture, clutter), and those that move erratically (players). The 
 			movement of the players is notoriously hard to predict, and it is probably a 
 			waste of time trying to impostor players.</p>
 		<p>On the other hand, impostoring the scenery and furniture is a far more viable 
-			proposition. Prediction for them is trivial – they almost never move. And when 
+			proposition. Prediction for them is trivial â€“ they almost never move. And when 
 			they do move, they usually move under control of a player, i.e. erratically. 
 			The easiest thing is to simply disable impostoring for the duration of the 
 			movement.</p>
 		<p>For god games and Real Time Strategy (RTS) games, the problems are similar, but 
-			the movement of the camera is very different. It is usually a bird’s-eye view, 
+			the movement of the camera is very different. It is usually a birdâ€™s-eye view, 
 			and most of the time it is either static (while issuing orders to units), or 
 			moving at constant speed over the map to get to a different area. Small, 
 			erratic movements are rare, which is fortunate since these are extremely hard 
@@ -336,14 +336,14 @@ p.MsoTitle, li.MsoTitle, div.MsoTitle
 		<p>Impostoring is useful when trying to draw scenes with lots of fairly static 
 			objects in them. The raw triangle count will overwhelm any bus and graphics 
 			device that tries to render them at top detail, and progressive mesh methods 
-			can only do a certain amount to reduce the workload – texture changes and 
+			can only do a certain amount to reduce the workload â€“ texture changes and 
 			animation are extremely difficult to reduce in this way.</p>
 		<p>Impostoring is most effective on static objects some distance from the camera. 
 			Introducing this sort of clutter into games increases the visual quality 
 			substantially, especially since each object is still a real independent 3D 
 			object and can still be interacted with by the player. It also allows key 
 			objects to be &quot;hidden in plain sight&quot; amongst a lot of other objects 
-			– something that has been extremely difficult to do with existing techniques 
+			â€“ something that has been extremely difficult to do with existing techniques 
 			and the limited number of objects available in a scene.</p>
 		<p>Even an implementation using a bounding box and some simple maths produces good 
 			results for the incidental objects that are currently missing from games, but 

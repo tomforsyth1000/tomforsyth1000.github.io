@@ -94,9 +94,9 @@ use in particular situations.</p>
 <p class=MsoNormal>This Gem does assume a basic familiarity
 with VIPM, and there is no space for a thorough introduction here. However,
 there are several good guides both in print and online. The two best known are
-Jan Svarovskyís Gem in Game Programming Gems 1 [Svarovsky00] and Charles
-Bloomsí website [Bloom01], both of which have excellent step-by-step guides to
-implementations of the ìvanillaî VIPM method. All the methods discussed here
+Jan Svarovsky‚Äôs Gem in Game Programming Gems 1 [Svarovsky00] and Charles
+Blooms‚Äô website [Bloom01], both of which have excellent step-by-step guides to
+implementations of the ‚Äúvanilla‚Äù VIPM method. All the methods discussed here
 use the same basic collapse/split algorithm, but implement it in different
 ways.</p>
 
@@ -142,7 +142,7 @@ Bus bandwidth. How much data must be sent to the
 graphics card. On a PC, this means the AGP bus bandwidth.</li>
 
 <li>
-Vertexñcache coherency. Modern graphics cards
+Vertex‚Äìcache coherency. Modern graphics cards
 try to fetch, transform and light each vertex only once, even though the vertex
 will be used by multiple triangles. To do this they have a vertex cache that
 holds the most recently used vertices, and applications need to try to use
@@ -155,13 +155,13 @@ has a higher vertex cache hit rate.</li>
 
 <p class=MsoNormal>Vertex cache coherency will be quoted in
 terms of the number of vertices loaded or processed per triangle drawn, or
-ìvertices per triangleî. Current triangle reordering algorithms for static
+‚Äúvertices per triangle‚Äù. Current triangle reordering algorithms for static
 (i.e. non-VIPM) meshes, using modern vertex caches of around 16 entries can get
 numbers down to around 0.65. For an example, see [Hoppe99]. This gives suitable
 benchmark figures to compare efficiencies when the mesh is converted to a VIPM
 one. Also note that when calculating the vertices per triangle using triangle
 strips, only drawn triangles should be counted, not degenerate ones. The
-degenerate triangles are a necessary evil ñ they donít add anything to the
+degenerate triangles are a necessary evil ‚Äì they don‚Äôt add anything to the
 scene at all.</p>
 
 <p class=MsoNormal>Algorithms that are good at streaming allow
@@ -171,49 +171,49 @@ somewhere along the way, such as available disk bandwidth, or available memory
 on the machine.</p>
 
 <p class=MsoNormal>This also helps systems with virtual memory
-ñ if the data is accessed linearly, the virtual memory manager can swap out
+‚Äì if the data is accessed linearly, the virtual memory manager can swap out
 data that has yet to be accessed, or has not been accessed for a long time.
 Static data can be optimized even further and made into a read-only
-memory-mapped file. This also ensures that irritating ìloading levelî messages
+memory-mapped file. This also ensures that irritating ‚Äúloading level‚Äù messages
 are no more tedious than absolutely necessary. The object data does not all
-need to be loaded at the start ñ the player can start playing the level with
+need to be loaded at the start ‚Äì the player can start playing the level with
 low-resolution data and as the detailed models are needed, they will be loaded.</p>
 
 <p class=MsoNormal>All the methods discussed here are based
 around implementations of the same fundamental algorithm. Single operations are
 done that collapse a single vertex onto another vertex along one of its
-triangle edges. No new ìaverageî vertex is generated, and no collapses between
+triangle edges. No new ‚Äúaverage‚Äù vertex is generated, and no collapses between
 vertices that do not share an edge are allowed. These are worth looking into,
 however the current consensus is that they involve a higher runtime cost for
 equivalent error levels on most current hardware. Of course, things change, and
 new algorithms are always being invented.</p>
 
 <p class=MsoNormal>A note on the terminology used. The
-ìresolutionî of a mesh is proportional to the number or triangles in it. Thus a
-ìhigh-resolutionî mesh undergoes edge collapses and becomes a
-ìlower-resolutionî mesh. The opposite of an edge collapse is an edge ìsplitî,
+‚Äúresolution‚Äù of a mesh is proportional to the number or triangles in it. Thus a
+‚Äúhigh-resolution‚Äù mesh undergoes edge collapses and becomes a
+‚Äúlower-resolution‚Äù mesh. The opposite of an edge collapse is an edge ‚Äúsplit‚Äù,
 where a single vertex splits into two separate vertices. For a given
-edge-collapse, there is a ìkeptî vertex and a ìbinnedî vertex. The binned
+edge-collapse, there is a ‚Äúkept‚Äù vertex and a ‚Äúbinned‚Äù vertex. The binned
 vertex is not used in any lower-resolution meshes, the kept vertex is. For a
 given edge collapse, there are two types of triangle. Those that use the edge
-being collapsed will not be in any lower-resolution mesh, and are ìbinned.î For
+being collapsed will not be in any lower-resolution mesh, and are ‚Äúbinned.‚Äù For
 a typical collapse, there are two binned triangles, though there may be more or
 less for complex mesh topologies. Those that are not binned, but use the binned
-vertex are ìchangedî triangles, and changed so that they use the kept vertex
+vertex are ‚Äúchanged‚Äù triangles, and changed so that they use the kept vertex
 instead of the binned vertex. When performing an edge split, the previously
-binned vertex and triangles are ìnew,î though they are often still called
-ìbinnedî because typically there are no split data structures, just collapse
+binned vertex and triangles are ‚Äúnew,‚Äù though they are often still called
+‚Äúbinned‚Äù because typically there are no split data structures, just collapse
 data structures that are done in reverse. Most of the perspective is in the
-collapsing direction, so words like ìfirstî, ìnextî, ìbeforeî and ìafterî are
+collapsing direction, so words like ‚Äúfirst‚Äù, ‚Äúnext‚Äù, ‚Äúbefore‚Äù and ‚Äúafter‚Äù are
 used assuming collapses from a high-triangle mesh to a low-triangle mesh.
 Again, splits are done by undoing collapses.</p>
 
 <p class=MsoNormal>This gem will also be talking in a very PC
-and DirectX-centric way about CPUs, AGP buses, graphics cards (ìthe cardî),
+and DirectX-centric way about CPUs, AGP buses, graphics cards (‚Äúthe card‚Äù),
 system/video/AGP memory, index and vertex buffers. This is generally just a
-convenience ñ most consoles have equivalent units and concepts. Where there is
+convenience ‚Äì most consoles have equivalent units and concepts. Where there is
 a significant difference, they will be highlighted. The one term that may be
-unfamiliar is the AGP bus ñ this is the bus between the main system memory (and
+unfamiliar is the AGP bus ‚Äì this is the bus between the main system memory (and
 the CPU) and the graphics card with its memory. There are various speeds, but
 this bus is typically capable of around 500Mbytes/sec, which makes it
 considerably smaller than the buses between system memory and the CPU, and
@@ -253,43 +253,43 @@ following format:</p>
 
 <p class=Code>{</p>
 
-<p class=Code>†††† // The offset of the vertex that doesn't
+<p class=Code>¬†¬†¬†¬† // The offset of the vertex that doesn't
 vanish/appear.</p>
 
-<p class=Code>†††† unsigned short† wKeptVert;</p>
+<p class=Code>¬†¬†¬†¬† unsigned short¬† wKeptVert;</p>
 
-<p class=Code>†††† // Number of tris removed/added.</p>
+<p class=Code>¬†¬†¬†¬† // Number of tris removed/added.</p>
 
-<p class=Code>†††† unsigned char†† bNumTris;</p>
+<p class=Code>¬†¬†¬†¬† unsigned char¬†¬† bNumTris;</p>
 
-<p class=Code>†††† // How many entries in wIndexOffset[].</p>
+<p class=Code>¬†¬†¬†¬† // How many entries in wIndexOffset[].</p>
 
-<p class=Code>†††† unsigned char†† bNumChanges;</p>
+<p class=Code>¬†¬†¬†¬† unsigned char¬†¬† bNumChanges;</p>
 
-<p class=Code>†††† // How many entries in wIndexOffset[] in
+<p class=Code>¬†¬†¬†¬† // How many entries in wIndexOffset[] in
 the previous action.</p>
 
-<p class=Code>†††† unsigned char†† bPrevNumChanges;</p>
+<p class=Code>¬†¬†¬†¬† unsigned char¬†¬† bPrevNumChanges;</p>
 
-<p class=Code>†††† // Packing to get correct short alignment.</p>
+<p class=Code>¬†¬†¬†¬† // Packing to get correct short alignment.</p>
 
-<p class=Code>†††† unsigned char†† bPadding[1];</p>
+<p class=Code>¬†¬†¬†¬† unsigned char¬†¬† bPadding[1];</p>
 
 <p class=Code>&nbsp;</p>
 
-<p class=Code>†††† // The offsets of the indices to change.</p>
+<p class=Code>¬†¬†¬†¬† // The offsets of the indices to change.</p>
 
-<p class=Code>†††† // This will be of actual length
+<p class=Code>¬†¬†¬†¬† // This will be of actual length
 bNumChanges,</p>
 
-<p class=Code>†††† // then immediately after in memory will be
+<p class=Code>¬†¬†¬†¬† // then immediately after in memory will be
 the next record.</p>
 
-<p class=Code>†††† unsigned short† wIndexOffset[];</p>
+<p class=Code>¬†¬†¬†¬† unsigned short¬† wIndexOffset[];</p>
 
 <p class=Code>};</p>
 
-<p class=MsoNormal>This structure is not a fixed length ñ <span style='font-family:monospace'>wIndexOffset[]</span> grows to the number of vertices that need changing. This
+<p class=MsoNormal>This structure is not a fixed length ‚Äì <span style='font-family:monospace'>wIndexOffset[]</span> grows to the number of vertices that need changing. This
 complicates the access functions slightly, but ensures that when performing
 collapses or splits, all the collapse data is in sequential memory addresses,
 which allows cache lines and cache pre-fetching algorithms to work efficiently.
@@ -298,25 +298,25 @@ disk very easily. Because it is static and global, it can also be made into a
 read-only memory-mapped file, which under many operating systems are extremely
 efficient.</p>
 
-<p class=MsoNormal>Although at first glance <span style='font-family:monospace'>bPrevNumChanges </span>doesnít seem to be needed for collapses, it is needed when doing
-splits and going back up the list ñ the number of <span style='font-family:monospace'>wIndexOffset[]</span> entries in the previous structure is needed so they can be skipped
+<p class=MsoNormal>Although at first glance <span style='font-family:monospace'>bPrevNumChanges </span>doesn‚Äôt seem to be needed for collapses, it is needed when doing
+splits and going back up the list ‚Äì the number of <span style='font-family:monospace'>wIndexOffset[]</span> entries in the previous structure is needed so they can be skipped
 over. Although this makes for convoluted-looking C, the assembly code produced
 is actually very simple.</p>
 
 <p class=MsoNormal>To perform a collapse, the number of
 vertices used is decremented, since the binned vertex is always the one on the
-end. The number of triangles is reduced by <span style='font-family:monospace'>bNumTris</span> ñ again, the binned triangles are always the ones on the end of the
+end. The number of triangles is reduced by <span style='font-family:monospace'>bNumTris</span> ‚Äì again, the binned triangles are always the ones on the end of the
 list.</p>
 
 <p class=MsoNormal>The changed triangles all need to be
 redirected to use the kept vertex instead of the binned one. The offsets of the
 indices that refer to the binned point are held in <span style='font-family:monospace'>wIndexOffset[]</span>. Each one references an index that needs to be changed from the
-binned vertexís index (which will always be the last one) to the kept vertexís
-index ñ <span style='font-family:monospace'>wKeptVert</span>:</p>
+binned vertex‚Äôs index (which will always be the last one) to the kept vertex‚Äôs
+index ‚Äì <span style='font-family:monospace'>wKeptVert</span>:</p>
 
 <p class=Code>&nbsp;</p>
 
-<p class=Code>†††† </p>
+<p class=Code>¬†¬†¬†¬† </p>
 
 <p class=Code>VanillaCollapseRecord *pVCRCur = the current
 collapse;</p>
@@ -338,10 +338,10 @@ i++ )</p>
 
 <p class=Code>{</p>
 
-<p class=Code>†††† ASSERT (
+<p class=Code>¬†¬†¬†¬† ASSERT (
 pwIndices[pVCRCur-&gt;wIndexOffset[i]] == (unsigned short)iCurNumVerts );</p>
 
-<p class=Code>†††† pwIndices[pVCRCur-&gt;wIndexOffset[i]] = pVCRCur-&gt;wKeptVert;</p>
+<p class=Code>¬†¬†¬†¬† pwIndices[pVCRCur-&gt;wIndexOffset[i]] = pVCRCur-&gt;wKeptVert;</p>
 
 <p class=Code>}</p>
 
@@ -349,7 +349,7 @@ pwIndices[pVCRCur-&gt;wIndexOffset[i]] == (unsigned short)iCurNumVerts );</p>
 
 <p class=Code>pIndexBuffer-&gt;Unlock();</p>
 
-<p class=Code>// Remember, itís not a simple ++ (though the
+<p class=Code>// Remember, it‚Äôs not a simple ++ (though the
 operator could be overloaded).</p>
 
 <p class=Code>pVCRCur = pVCRCur-&gt;Next();</p>
@@ -358,14 +358,14 @@ operator could be overloaded).</p>
 
 <p class=MsoNormal>Note that reading from hardware index
 buffers can be a bad idea on some architectures, so be careful of exactly what
-that <span style='font-family:monospace'>ASSERT()</span> is doing ñ it is mainly for illustration purposes.</p>
+that <span style='font-family:monospace'>ASSERT()</span> is doing ‚Äì it is mainly for illustration purposes.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
 <p class=MsoNormal>[<span style='color:red'>Figure 1 - insert
 VIPM_fig1.SDR]</span></p>
 
-<p class=MsoNormal>Figure 1 ñ An edge collapse with before and
+<p class=MsoNormal>Figure 1 ‚Äì An edge collapse with before and
 after index lists and the VanillaCollapseRecord.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -389,10 +389,10 @@ i++ )</p>
 
 <p class=Code>{</p>
 
-<p class=Code>†††† ASSERT (
+<p class=Code>¬†¬†¬†¬† ASSERT (
 pwIndices[pVCRCur-&gt;wIndexOffset[i]] == pVCRCur-&gt;wKeptVert );</p>
 
-<p class=Code>†††† pwIndices[pVCRCur-&gt;wIndexOffset[i]] =
+<p class=Code>¬†¬†¬†¬† pwIndices[pVCRCur-&gt;wIndexOffset[i]] =
 (unsigned short)iCurNumVerts;</p>
 
 <p class=Code>}</p>
@@ -407,7 +407,7 @@ pwIndices[pVCRCur-&gt;wIndexOffset[i]] == pVCRCur-&gt;wKeptVert );</p>
 
 <p class=Code>&nbsp;</p>
 
-<p class=MsoNormal>Note ñ in practice, and for arbitrary
+<p class=MsoNormal>Note ‚Äì in practice, and for arbitrary
 historical reasons, in the sample code the <span style='font-family:monospace'>VertexCollapseRecords</span> are stored last first, so the <span style='font-family:monospace'>Prev()</span> and <span style='font-family:monospace'>Next()</span> calls are swapped.</p>
 
 <p class=MsoNormal>Vanilla VIPM is simple, easy to code, and
@@ -451,7 +451,7 @@ Hardware is very good at spotting degenerate triangles, and throws them away
 very quickly without trying to draw any pixels.</p>
 
 <p class=MsoNormal>This means that the order of triangles is
-no longer determined by collapse order ñ they can be ordered by some other
+no longer determined by collapse order ‚Äì they can be ordered by some other
 criteria. The cunning thing that the original SkipStrips paper pointed out is
 that triangles can now be ordered into strip order, and indeed converted into
 strips. This is great for hardware that prefers their data in strip order.
@@ -459,7 +459,7 @@ Since this VIPM method was inspired by the paper, it inherited the name,
 despite it being somewhat inaccurate.</p>
 
 <p class=MsoNormal>The ability to reorder triangles increases
-vertex cache coherency. Strips are naturally good at this ñ they have an
+vertex cache coherency. Strips are naturally good at this ‚Äì they have an
 implicit 1.0 vertices per triangle efficiency (for long strips with no
 degenerates), and with the right ordering and a decent-sized vertex cache they
 can get much lower values.</p>
@@ -485,13 +485,13 @@ remaining vertices increases. A collapse that bins that vertex must change all
 the indices that refer to it, including the degenerate triangles. So the more
 collapses that get done, the more expensive each collapse becomes, because the
 size of <span style='font-family:monospace'>wIndexOffset[]</span> grows. This does not scale with the number of triangles drawn,
-which is no good, since that is the whole point of VIPM ñ things at lower
+which is no good, since that is the whole point of VIPM ‚Äì things at lower
 detail should take less time to render.</p>
 
 <h1>Multi-level Skipstrips</h1>
 
 <p class=MsoNormal>Fortunately, there is a solution to most of
-skipstripís woes. After a certain number of collapses, simply stop, take the
+skipstrip‚Äôs woes. After a certain number of collapses, simply stop, take the
 current geometry with all of its collapses done, throw away the degenerate
 triangles, and start making a completely new skipstrip from scratch. Continue
 collapses with this new skipstrip until it too becomes inefficient, and so on.</p>
@@ -500,22 +500,22 @@ collapses with this new skipstrip until it too becomes inefficient, and so on.</
 the degenerate triangles are thrown away, which reduces the number of triangles
 (both visible and degenerate) that are sent to the card. The triangles are also
 reordered to make lists that are again vertex-cache-optimal. New collapses
-donít need to change lots of degenerate triangle indices each time, each
+don‚Äôt need to change lots of degenerate triangle indices each time, each
 instance only needs to copy the skipstrip level that it actually uses, and they
 get shorter with decreasing detail.</p>
 
 <p class=MsoNormal>The different index lists can be stored
 globally, since when switching to a new list a new copy is taken and then
 refined with collapses to exactly the number of triangles wanted. So the fact
-that there are now multiple index lists is not too bad ñ itís global data. This
+that there are now multiple index lists is not too bad ‚Äì it‚Äôs global data. This
 also restores some of the nice streaming-friendliness that the vanilla method
-has. The granularity is a bit coarser ñ the whole of an index list must be
-grabbed before anything can be rendered using that level, but at least itís no
+has. The granularity is a bit coarser ‚Äì the whole of an index list must be
+grabbed before anything can be rendered using that level, but at least it‚Äôs no
 longer an all-or-nothing thing, and the lower-resolution index lists are
 actually very small.</p>
 
 <p class=MsoNormal>For a bit more efficiency, two versions of
-the index lists can be stored in global space ñ fully collapsed (before switching
+the index lists can be stored in global space ‚Äì fully collapsed (before switching
 to a lower-resolution list that is) and fully uncollapsed. This means that a
 single-collapse oscillation across the boundary between two index lists is
 still fairly efficient. If only the uncollapsed versions are held, each time
@@ -529,7 +529,7 @@ structures are the same as for standard skipstrips, except that there is a
 global array of structures holding the pre-made index lists, the collapse lists
 for each one, and the number of collapses in each. Before doing any collapses
 or splits, the code checks to see if it needs to change level, and if so copies
-the new levelís index list and starts doing collapses/splits until it reaches
+the new level‚Äôs index list and starts doing collapses/splits until it reaches
 the right LoD within that level.</p>
 
 <p class=MsoNormal>So this has fixed all the bad things about
@@ -557,7 +557,7 @@ memory instead of having to be copied for each instance.</p>
 <p class=MsoNormal>On a multi-level skipstrip, a lot of the
 triangles are not affected even when that level is fully collapsed. So there is
 no need to copy those triangles per-instance; they can be global and shared
-between instances. In fact, for this algorithm indexed lists are used ñ the
+between instances. In fact, for this algorithm indexed lists are used ‚Äì the
 indexed strip case will be discussed afterwards as a variant. At each level,
 the triangles are split into four lists:</p>
 
@@ -587,12 +587,12 @@ exactly the same modification algorithm as vanilla VIPM.</p>
 
 <p class=MsoNormal>To draw the mesh, the required collapses
 and splits are done to the dynamic per-instance list, and the list is drawn.
-Then the associated levelís static list is drawn, with the only modification
+Then the associated level‚Äôs static list is drawn, with the only modification
 being that the number of triangles drawn will change as static triangles are
 collapsed.</p>
 
 <p class=MsoNormal>The code and structures needed are based on
-the multi-level skiplist, except that for each level there are two lists ñ the
+the multi-level skiplist, except that for each level there are two lists ‚Äì the
 copied dynamic one and the shared static one. The other change is that there
 are two triangle counts, one for each list, and a collapse may alter either or
 both of these numbers. So the <span style='font-family:monospace'>bNumTris</span> member is replaced
@@ -602,7 +602,7 @@ increment and decrements added.</p>
 <p class=MsoNormal>This means that a large proportion of each
 mesh is being drawn from a static index buffer that is tuned for vertex cache
 coherency (list 1). It is not quite as good as it could be, since the triangles
-in this list only make up part of the object. There will be ìholesî in the mesh
+in this list only make up part of the object. There will be ‚Äúholes‚Äù in the mesh
 where triangles have been moved to the other three lists, and this decreases
 both the maximum and the actual vertex per triangle numbers that are obtained.
 Some of the dynamic buffer is also ordered for optimal vertex cache behavior
@@ -612,9 +612,9 @@ reordering can do.</p>
 
 <p class=MsoNormal>Like all multi-level methods, it is
 streaming/friendly, though in this case, since the lists are ordered by
-collapse order, the granularity is even finer ñ at the triangle level, not just
+collapse order, the granularity is even finer ‚Äì at the triangle level, not just
 the list level. Whether this is a terribly exciting thing is a different
-question ñ the finer control is probably not going to make much of a difference
+question ‚Äì the finer control is probably not going to make much of a difference
 to performance.</p>
 
 <p class=MsoNormal>This does require two DrawIndexedPrimitive
@@ -631,7 +631,7 @@ it is done using the skipstrips algorithm. As with skipstrips, using strips
 means that ordering by collapse order is too inefficient, and this means that list
 2 triangles now have to be binned by being made degenerate. This forces them to
 become dynamic instead of static, and they join lists 3 and 4. The triangles
-from these three lists are merged together and treated as a skipstrip ñ
+from these three lists are merged together and treated as a skipstrip ‚Äì
 reordered for optimal vertex cache efficiency, copied for each instance, and
 modified by collapse information.</p>
 
@@ -649,7 +649,7 @@ fully static and global index buffers, with no editing of indices, and
 therefore a tiny amount of per-instance memory.</p>
 
 <p class=MsoNormal>Sliding window notes that when a collapse
-happens, there are two classes of triangles ñ binned triangles and modified
+happens, there are two classes of triangles ‚Äì binned triangles and modified
 triangles. However, there is no real need for the modified triangles to
 actually be at the same physical position in the index buffer before and after
 the collapse. The old version of the triangles could simply drop off the end of
@@ -659,15 +659,15 @@ at the other end.</p>
 <p class=MsoNormal>So instead of an example collapse binning
 two triangles and editing three others, it actually bins five triangles and
 adds three new ones. Both operations are performed by just changing the first
-and last indices used for rendering ñ sliding a ìrendering windowî along the
+and last indices used for rendering ‚Äì sliding a ‚Äúrendering window‚Äù along the
 index buffer.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>[<span style='color:red'>Figure 2 ñ insert
+<p class=MsoNormal>[<span style='color:red'>Figure 2 ‚Äì insert
 VIPM_fig2.sdr]</span></p>
 
-<p class=MsoNormal>Figure 2 ñ a collapse showing the index
+<p class=MsoNormal>Figure 2 ‚Äì a collapse showing the index
 list and the two windows.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -680,8 +680,8 @@ collapses, again ordered in reverse collapse order - first collapse at the end.
 Note that a triangle modified as the result of a collapse cannot then be
 involved (either binned or changed) in another collapse. To be modified by a
 second collapse would mean that triangle would have to fall off the end of the
-index buffer. But it has already been added to the start ñ it cannot then also
-fall off the end ñ the chance of the ordering being just right to allow this
+index buffer. But it has already been added to the start ‚Äì it cannot then also
+fall off the end ‚Äì the chance of the ordering being just right to allow this
 are incredibly slim.</p>
 
 <p class=MsoNormal>So once a triangle has been modified by a
@@ -704,9 +704,9 @@ for all the index buffers is going to be huge.</p>
 <p class=MsoNormal>However, there is actually no need to
 strictly follow the order of collapses that QEM decides. Progressive meshing is
 not an exact science, since it ignores everything but the distance of the
-camera from the object, and the whole point is to simply be ìgood enoughî to
+camera from the object, and the whole point is to simply be ‚Äúgood enough‚Äù to
 fool the eye. So there is no real need to precisely follow the collapse order
-that QEM decides ñ it can be manipulated a bit.</p>
+that QEM decides ‚Äì it can be manipulated a bit.</p>
 
 <p class=MsoNormal>The way to do this is to follow the QEM
 collapse order until it decides to do a collapse that involves triangles that
@@ -736,7 +736,7 @@ before this happens, but this still keeps memory use down to sensible levels.</p
 <p class=MsoNormal>Since no runtime modification is made to
 the index or vertex lists, all the data can be made global, and there is almost
 zero instance memory use. There is also almost zero CPU use to change level of
-detail ñ each time a simple table lookup is made to decide the index list to
+detail ‚Äì each time a simple table lookup is made to decide the index list to
 use, the start and end index to draw from that index list, and how many
 vertices are used. In practice, the index lists are concatenated together, so
 that the start index also implies the index list to use. The table is composed
@@ -748,11 +748,11 @@ of this structure:</p>
 
 <p class=Code>{</p>
 
-<p class=Code>†††† unsigned int††† dwFirstIndexOffset;</p>
+<p class=Code>     unsigned int    dwFirstIndexOffset;</p>
 
-<p class=Code>†††† unsigned short† wNumTris;</p>
+<p class=Code>     unsigned short  wNumTris;</p>
 
-<p class=Code>†††† unsigned short† wNumVerts;</p>
+<p class=Code>     unsigned short  wNumVerts;</p>
 
 <p class=Code>};</p>
 
@@ -772,42 +772,42 @@ swrRecords[iLoD];</p>
 
 <p class=Code>d3ddevice-&gt;DrawIndexedPrimitive (</p>
 
-<p class=Code>†††† D3DPT_TRIANGLELIST,†††††††††††††††††† //
+<p class=Code>     D3DPT_TRIANGLELIST,                   //
 Primitive type</p>
 
-<p class=Code>†††† 0,††††††††††††††††††††††††††††††††††† //
+<p class=Code>     0,                                    //
 First used vertex</p>
 
-<p class=Code>†††† pswr-&gt;wNumVerts,†††††††††††††††††††††††††† //
+<p class=Code>     pswr-&gt;wNumVerts,                           //
 Number of used vertices</p>
 
-<p class=Code>†††† pswr-&gt;dwFirstIndexOffset,†††††††††††† //
+<p class=Code>     pswr-&gt;dwFirstIndexOffset,             //
 First index</p>
 
-<p class=Code>†††† pswr-&gt;wNumTris );††††††††††††††††††††††††† //
+<p class=Code>     pswr-&gt;wNumTris );                          //
 Number of triangles</p>
 
 <p class=Code>&nbsp;</p>
 
 <p class=MsoNormal>There is no code to do splits or collapses
-as with all the other methods ñ the current LoD is just looked up in the
+as with all the other methods ‚Äì the current LoD is just looked up in the
 SlidingWindowRecord table each time the object is rendered. This also means
 that with hardware transform and lighting cards, the CPU time required to
 render objects is fixed and constant per object, whatever their level of
-detail. The phrase ìconstant timeî is always a good one to find lurking in any
+detail. The phrase ‚Äúconstant time‚Äù is always a good one to find lurking in any
 algorithm.</p>
 
 <p class=MsoNormal>The major problem with sliding window VIPM
 is that it forces the ordering of the triangles at the start and end of each
-levelís index lists. This has two effects ñ one is that it makes strips hard to
-use ñ only triangle lists really handle fixed-ordering well. The other is that
+level‚Äôs index lists. This has two effects ‚Äì one is that it makes strips hard to
+use ‚Äì only triangle lists really handle fixed-ordering well. The other is that
 vertex cache efficiency is affected.</p>
 
 <p class=MsoNormal>Fortunately, it is not as bad as it first
 seems. When an edge collapse is performed, all the triangles that use the
 binned vertex are removed, so they all go on the end of the triangle list. This
 is typically from five to seven triangles, and they form a triangle fan around
-the binned vertex. Then the new versions of the triangles are added ñ these
+the binned vertex. Then the new versions of the triangles are added ‚Äì these
 need to go together at the start of the index list, there are typically three
 to five of them, and they form a triangle fan around the kept vertex. These
 fans can be ordered within themselves to get the best cache coherency. The
@@ -817,7 +817,7 @@ vanilla. Although it is still quite a bit short of the theoretical ideal, it is
 not unreasonably poor.</p>
 
 <p class=MsoNormal>Vertex cache coherency can be raised by
-having a larger middle index list section in each level ñ by having fewer
+having a larger middle index list section in each level ‚Äì by having fewer
 collapses per level. This takes more memory, but the extra performance may be
 worth it, especially as it is global memory.</p>
 
@@ -825,7 +825,7 @@ worth it, especially as it is global memory.</p>
 lists can still use this method, though it does require a lot of degenerate
 triangles to join the different parts up. In practice, this does not increase
 the number of indices required, it actually reduces it - strips have one index
-per triangle, compared to a listís three. The vertex cache efficiency per drawn
+per triangle, compared to a list‚Äôs three. The vertex cache efficiency per drawn
 triangle is exactly the same. The raw triangle throughput is increased a lot
 (roughly doubled), but since all these extra triangles are just degenerate,
 most hardware will reject them very quickly. If there is a choice, which of the
@@ -841,14 +841,14 @@ it has beaten off VDPM and static LoD methods for the most visual bang for the
 CPU buck (though it is worth noting that VDPM methods are still challengers for
 large landscapes, especially regular-height-field ones). And now it has a
 plethora of methods to choose from, each with its own advantages and
-disadvantages. Innovation certainly wonít stop there ñ there are already some
-interesting paths for future investigation ñ but this roundup should give a
+disadvantages. Innovation certainly won‚Äôt stop there ‚Äì there are already some
+interesting paths for future investigation ‚Äì but this roundup should give a
 fairly good guide to some of the issues and options when choosing which VIPM
 method to implement.</p>
 
 <p class=MsoNormal>Table 1 shows the results of each method
-with their relative strengths and weaknesses. Note that ìskipstripsî refers to
-multi-level skipstrips ñ the single-level version is not actually a sensible
+with their relative strengths and weaknesses. Note that ‚Äúskipstrips‚Äù refers to
+multi-level skipstrips ‚Äì the single-level version is not actually a sensible
 method in practice, for the reasons given.</p>
 
 <p class=MsoNormal>&nbsp;</p>
@@ -912,8 +912,8 @@ weaknesses of each VIPM method.</p>
 
 <h1>References</h1>
 
-<p class=Hanging>[Svarovsky00] Svarovsky, Jan. ìView-independent 
-Progressive Meshingî, Games Programming Gems 1, ISBN 1584500492.
+<p class=Hanging>[Svarovsky00] Svarovsky, Jan. ‚ÄúView-independent 
+Progressive Meshing‚Äù, Games Programming Gems 1, ISBN 1584500492.
 A similar talk was given at GDC99, available from 
 <a href="http://www.svarovsky.org/ExtremeD/">
 http://www.svarovsky.org/ExtremeD/</a>.</p>
@@ -923,14 +923,14 @@ and various VIPM thoughts gathered from many sources.
 <a href="http://www.cbloom.com/3d/index.html">
 http://www.cbloom.com/3d/index.html</a></p>
 
-<p class=Hanging>[Hoppe99] Hoppe, Hugues. ìOptimization of
-Mesh Locality for Transparent Vertex Cachingî, Computer Graphics (SIGGRAPH 1999
+<p class=Hanging>[Hoppe99] Hoppe, Hugues. ‚ÄúOptimization of
+Mesh Locality for Transparent Vertex Caching‚Äù, Computer Graphics (SIGGRAPH 1999
 proceedings) pages 269-276. Also from <a href="http://www.research.microsoft.com/~hoppe/">
 http://www.research.microsoft.com/~hoppe/</a></p>
 
 <p class=Hanging>[El-Sana99] J. El-Sana, F. Evans, A. Varshney,
-S. Skiena, E. Azanli,. ìEfficiently Computing and Updating Triangle Strips for
-View-Dependent Renderingî The Journal of Computer Aided Design Vol 32, IS 13,
+S. Skiena, E. Azanli,. ‚ÄúEfficiently Computing and Updating Triangle Strips for
+View-Dependent Rendering‚Äù The Journal of Computer Aided Design Vol 32, IS 13,
 pages 753-772. Also from at <a href="http://www.cs.bgu.ac.il/~el-sana/publication.html">
 http://www.cs.bgu.ac.il/~el-sana/publication.html</a></p>
 
@@ -948,27 +948,27 @@ for in the printed version, so here is a fairly disorganised assembly of them.
 It's also been slightly updated from the original in light of experience with
 Blade 2 - of which there is more below in the Hindsights section)</p>
 
-<h1>Raison díEtre</h1>
+<h1>Raison d‚ÄôEtre</h1>
 
 <p class=MsoNormal>It is worth noting a few misconceptions about VIPM that have
 cropped up in discussions with people.</p>
 
 <p class=MsoNormal>First, VIPM is not aimed at getting low-end machines running
 faster. It can have this side effect in many cases, but that is not its primary
-aim. This may surprise many people ñ increasing speed on slow machines is often
+aim. This may surprise many people ‚Äì increasing speed on slow machines is often
 assumed to be the whole point of VIPM, and many approach it with this in mind.
 However, with low-end machines you need to render objects with as few tris as
 possible. The problem with most forms of VIPM is that they produce very poor
 low-tri representations of objects, at least when compared to the output of a
 good 3D artist given the same triangle budget. If the aim of an engine is to
 run well on low-end machines, getting an artist to author good low-tri models
-is really the only way to proceed ñ they produce far better looking 200-tri people
+is really the only way to proceed ‚Äì they produce far better looking 200-tri people
 than any automated VIPM routine can.</p>
 
 <p class=MsoNormal>The real aim of VIPM is to allow artists to author high-tri
 models for use on high-end platforms, but allowing the extra triangle detail to
 be used where it matters in a scene, without burning the triangle budget on
-unnoticed background detail. This is the real power of scalability techniques ñ
+unnoticed background detail. This is the real power of scalability techniques ‚Äì
 the ability to have lots of extremely detailed models in a scene, but only
 showing the detail that is visible at any one time. The fact that by tweaking a
 few global values, lower-end machines can use all the detail their available
@@ -1013,7 +1013,7 @@ undying respect does not make them any less wrong)</p>
 alpha-blend between the different LoDs. This produces a smooth
 change, but does mean that pixel fillrate is increased dramatically. Not only
 is the object being drawn (and animated and lit and so on) twice, but both
-passes (yes, both, not just one ñ think about it) need to use alpha-blending,
+passes (yes, both, not just one ‚Äì think about it) need to use alpha-blending,
 which is more expensive than normal rendering. And if the object normally has
 alpha-blended parts, then things can get a bit tricky trying to achieve the
 right effect while doing the blend. This effect used to be used by the 
@@ -1033,11 +1033,11 @@ the VIPM method you use to draw the mesh, which is why error metrics were
 barely mentioned in the printed text. However, a quick word is in order.</p>
 
 <p class=MsoNormal>Many people including myself have had excellent results with
-Garland and Heckbertís Quadric Error Metrics [GarlandHeckbert97],
+Garland and Heckbert‚Äôs Quadric Error Metrics [GarlandHeckbert97],
 and the further refinements introduced by Hoppe [Hoppe99]
 for vertex attributes such as colour, texture co-ordinate and so on. The maths
 of the academic papers can be initially intimidating, but the implementation is
-actually very simple, versatile and quick. A very naÔve version of the basic
+actually very simple, versatile and quick. A very na√Øve version of the basic
 Garland-Heckbert QEM is included in the code, mainly so that the
 data generated is representative of real VIPM collapse orders.</p>
 
@@ -1048,7 +1048,7 @@ artists to generate both low and high-tri versions of the model, and
 ensure that the QEM is guided to collapse the object down from one to the
 other. The other way is to start with the low-poly mesh and work upwards, 
 tessellating towards the high-poly mesh. There are several ways to do this 
-ñ one that has some other very nice properties is discussed in a talk I 
+‚Äì one that has some other very nice properties is discussed in a talk I 
 gave at the Windows Games Developer Conference 2000 [Forsyth00].</p>
 
 <h1>Hybrids</h1>
@@ -1067,10 +1067,10 @@ much higher than the close distances.</p>
 
 <p class=MsoNormal>At the low tri levels, sliding window could be used.
 Although it has a comparatively low vertex cache efficiency, the objects are at
-such low triangle levels that they donít actually make up much of the sceneís
+such low triangle levels that they don‚Äôt actually make up much of the scene‚Äôs
 triangle budget. However, there are a lot of them, and sliding window not only
 has near-zero memory per instance, but also changes LoD in constant (and 
-nearly zero) time ñ always a good characteristic when the number of separate 
+nearly zero) time ‚Äì always a good characteristic when the number of separate 
 objects is high. Another side effect is that since these are low tri levels, 
 the number of sliding window levels can be increased without too much memory 
 bloat. As noted above, this increases the vertex cache coherency, if that is 
@@ -1087,15 +1087,15 @@ full-tilt (though unrealistic) triangle rates of 20Mtri/sec. I assumed that you
 were aiming for a fairly conventional (some might say low) frame rate of 30Hz.
 And I assumed that the vanilla VIPM method was at least only copying the
 indices it was currently using, with some hysteresis to avoid <span style='font-family:monospace'>
-malloc()</span>-thrashing ñ
+malloc()</span>-thrashing ‚Äì
 say a 30% over-estimation.</p>
 
 <p class=MsoNormal>So 20Mtri/sec at 30Hz means 667ktris per frame. Assuming
 those are all from vanilla VIPM objects, and they were all unique (neither of
-which is true ñ most scenes have some objects rendered with multiple passes as
+which is true ‚Äì most scenes have some objects rendered with multiple passes as
 well as non-VIPM objects such as particle effects), and assuming the 30%
 over-estimation, that means 867ktris held in VIPM object index buffers each
-frame. Weíre using WORD indices, and triangle lists, so 6 bytes per triangle.
+frame. We‚Äôre using WORD indices, and triangle lists, so 6 bytes per triangle.
 Which gives 5.20Mbytes. Which is a decent chunk, but not actually all that much
 considering this is the worst-case scenario on the (current) best hardware,
 being driven at peak efficiency at a fairly modest frame rate. This machine
@@ -1114,14 +1114,14 @@ current hardware, that is still not all that large.</p>
 be. The obvious benefits are no per-instance memory use and virtually no CPU
 use. I worried that the memory for the index lists would be too large, but in
 fact it is of comparable size to the vertex data, and certainly not particularly
-large by todayís standards. Playing with the sample code with your own models
+large by today‚Äôs standards. Playing with the sample code with your own models
 will show that the memory use, even for single instances, is pretty reasonable.</p>
 
 <p class=MsoNormal>The other big weakness of sliding window was going to be the
-vertex cache coherency. But in fact itís not too bad. The fragmented start and
+vertex cache coherency. But in fact it‚Äôs not too bad. The fragmented start and
 end of each index level are bad, but they are still fans, rather than
 individual triangles, so not mad. For a typical mesh, the tri fans at the start
-of the list will have four tris and reference six vertices ñ a rate of 1.5
+of the list will have four tris and reference six vertices ‚Äì a rate of 1.5
 verts per tri. Not very good, but not stupidly bad. The tri fans at the end of
 the list typically have six tris and reference seven verts (remember that they
 form a complete fan around the binned vert), a rate of 1.17 tris per vert.
@@ -1138,7 +1138,7 @@ ratios, and they do drop to respectable levels.</p>
 tolerance, have fewer collapses per level, and thus have more tris in the
 optimal middle section. This does chew more memory of course. But there is no
 need to use this lower tolerance uniformly. The really expensive bits are the
-first few levels ñ they have a lot of indices in them, and each level
+first few levels ‚Äì they have a lot of indices in them, and each level
 replicates all that data. Fortunately, few objects are close enough to the
 camera to use these levels, so having a low vertex cache efficiency for these
 few objects is tolerable.</p>
@@ -1152,10 +1152,10 @@ more reasonable levels, and the extra memory use is not nearly as bad.</p>
 
 <p class=MsoNormal>The sample code has a number of features to be aware of. It
 does not handle multiple objects, just multiple instances of the same object.
-It does not handle materials ñ everything is just Gouraud-shaded white. It does
-not try to deal sensibly with seams and edges of meshes ñ it simply avoids
+It does not handle materials ‚Äì everything is just Gouraud-shaded white. It does
+not try to deal sensibly with seams and edges of meshes ‚Äì it simply avoids
 doing any collapses on them at all. It does not take normals into account when
-computing collapse errors, only vertex positions ñ the normals are simply there
+computing collapse errors, only vertex positions ‚Äì the normals are simply there
 for display purposes. In short, the collapse-generation algorithm does only
 just enough work to generate representative collapse orders, so as not to skew
 the comparison of the various methods. All these problems are interesting and
@@ -1165,20 +1165,20 @@ would take up a whole Gem by itself.</p>
 <p class=MsoNormal>It is worth noting that sitting an artist down and getting
 them to click on each edge to determine the collapse order is not that mad an
 idea. It takes less time than you might think, and keeps all the control in the
-artistís hands. When the model is millions of tris, itís a bit impractical, but
+artist‚Äôs hands. When the model is millions of tris, it‚Äôs a bit impractical, but
 at that level an automated collapse finder gets good results. All the errors
-are small, so itís hard to produce obviously wrong results. Once an object gets
+are small, so it‚Äôs hard to produce obviously wrong results. Once an object gets
 below a few thousand triangles, even the best QEM methods start to struggle,
 and that sort of tri count is low enough for an artist to spend time doing the
 rest by hand. In the grey area in between, using a mainly automated system with
 the artist watching and occasionally forcing an early collapse or (more
 frequently) forbidding collapses that the error metric has mistakenly labelled
-as ìlow errorî works quite well. <i>(note - this paragraph is somewhat 
+as ‚Äúlow error‚Äù works quite well. <i>(note - this paragraph is somewhat 
 theoretical - see the "Hindsights" section below for what we ended up 
 actually using for VIPM in Blade 2)</i></p>
 
 <p class=MsoNormal>The sample code also does not attempt to choose the level of
-detail of objects in any particularly sensible way ñ it just aims roughly for a
+detail of objects in any particularly sensible way ‚Äì it just aims roughly for a
 set number of triangles (or rather collapses) at a certain distance from the
 camera. Again, the aim is to get representative comparisons of the various
 methods, rather than to actually get good visual quality. In practice, the
@@ -1190,8 +1190,8 @@ Blade 2 we did a very dumb algorithm - see below)</i></p>
 
 <h1>Future Possibilities</h1>
 
-<p class=MsoNormal>All these methods use the same fundamental algorithm ñ a
-vertex is collapsed along an edge to another vertex. No new ìaverageî vertex
+<p class=MsoNormal>All these methods use the same fundamental algorithm ‚Äì a
+vertex is collapsed along an edge to another vertex. No new ‚Äúaverage‚Äù vertex
 is generated. It should be noted that calculating an average vertex position is
 tricky (the straight linear average is not a good approximation in many cases),
 and many dispute whether it gives much of a useful increase in detail for the
@@ -1202,7 +1202,7 @@ model when the artist has not designed them specifically for VIPM. The vertices
 of the low-tri model may simply not exist in the high-tri model, and so need to
 be added at some stage during the collapse.</p>
 
-<p class=MsoNormal>Anyway, there are two ways to do this ñ add those average
+<p class=MsoNormal>Anyway, there are two ways to do this ‚Äì add those average
 vertices into the global vertex buffer along with the originals, or make the
 vertex buffer a per-instance resource and when the collapse is made, replace
 one of the vertices with the new average data. </p>
@@ -1222,13 +1222,13 @@ may still be practical in some cases, but it is of limited interest.</p>
 pipelines because of they way they like to start at one place in the vertex
 buffer and process a given number of vertices in a row. Vertices in the vertex
 buffer that are not referenced by indices are still transformed and lit, and
-since this is the major cost in a software T&amp;L system, itís not efficient.
+since this is the major cost in a software T&amp;L system, it‚Äôs not efficient.
 However, if only hardware T&amp;L systems are being considered (e.g. very
 high-end machines only, or consoles) then a vertex buffer with unused vertices
-in it is not such a bad thing ñ vertices never referenced are never fetched,
+in it is not such a bad thing ‚Äì vertices never referenced are never fetched,
 transformed or lit.</p>
 
-<p class=MsoNormal>However, using something similar to the ìsliding windowî
+<p class=MsoNormal>However, using something similar to the ‚Äúsliding window‚Äù
 algorithm, but for vertices instead of triangles, would solve both problems.
 The vertex data would still be global, not per-instance; there is no runtime
 modification of it, it has no holes, and the memory use can be kept
@@ -1249,16 +1249,16 @@ cards could store vertex data in local video memory, which is why it only
 talks about AGP - but the same points are still valid)</i></p>
 
 <p class=MsoNormal>Using the sliding window method for vertices would again
-allow the central region to be ordered optimally ñ typically simply in the
+allow the central region to be ordered optimally ‚Äì typically simply in the
 order that tris use them. This means that the lookahead reads that the system
 memory bus does are more likely to be correct, and also allows the AGP more
 chance to squirt linear chunks of memory at the graphics card. Even though it
-doesnít directly affect vertex cache coherency, it does increase the effective
+doesn‚Äôt directly affect vertex cache coherency, it does increase the effective
 bandwidth of the AGP bus, and that is increasingly becoming the bottleneck in
-todayís graphics cards.</p>
+today‚Äôs graphics cards.</p>
 
 <p class=MsoNormal>Another future possibility is to extend the code to use the
-ìlimited instanceî idea. Use something like skipstrips, but instead of having
+‚Äúlimited instance‚Äù idea. Use something like skipstrips, but instead of having
 one instance per on-screen object, the number of instances is set to a fixed
 (fairly low) number. When an object needs rendering at a certain LoD, take the
 instance that is currently closest to this LoD and collapse/split it until the
@@ -1274,14 +1274,14 @@ the end.</p>
 
 <h1>References</h1>
 
-<p class=Hanging>[GarlandHeckbert97] Garland, Heckbert, . ìSurface Simplification Using Quadric Error Metricsî, SIGGRAPH 97. Also from <a href="http://graphics.cs.uiuc.edu/~garland/research/quadrics.html">
+<p class=Hanging>[GarlandHeckbert97] Garland, Heckbert, . ‚ÄúSurface Simplification Using Quadric Error Metrics‚Äù, SIGGRAPH 97. Also from <a href="http://graphics.cs.uiuc.edu/~garland/research/quadrics.html">
 http://graphics.cs.uiuc.edu/~garland/research/quadrics.html</a></p>
 
-<p class=Hanging>[Hoppe99] Hoppe, Hugues. ìNew quadric metric for simplifying meshes with appearance attributesî, IEEE Visualization 1999, October 1999, 59-66. Also from
+<p class=Hanging>[Hoppe99] Hoppe, Hugues. ‚ÄúNew quadric metric for simplifying meshes with appearance attributes‚Äù, IEEE Visualization 1999, October 1999, 59-66. Also from
 <a href="http://research.microsoft.com/~hoppe/">
 http://research.microsoft.com/~hoppe/</a></p>
 
-<p class=Hanging>[Forsyth00] Forsyth, Tom. ìWhere have all the bumpmaps gone?î, Meltdown 2000. Also from
+<p class=Hanging>[Forsyth00] Forsyth, Tom. ‚ÄúWhere have all the bumpmaps gone?‚Äù, Meltdown 2000. Also from
 <a href="http://www.eelpi.gotdns.org/papers/papers.html">
 http://www.eelpi.gotdns.org/papers/papers.html</a></p>
 
